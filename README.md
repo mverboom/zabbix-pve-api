@@ -20,6 +20,9 @@ This is an exceprt of the features of the template set:
   * All Proxmox nodes in a cluster (or single host for non clusters)
   * LXC containers
   * Qemu virtual machines
+* Datacenter monitoring of
+  * Number of nodes in cluster
+  * Failed tasks
 * Proxmox node monitoring of
   * CPU
   * Memory
