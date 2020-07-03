@@ -6,9 +6,9 @@ The template set consists of 4 templates, of which only 1 should be manually
 assigned:
 
 * pve api datacenter
-** pve api node
-** pve api lxc
-** pve api qemu
+  * pve api node
+  * pve api lxc
+  * pve api qemu
 
 The pve api datacenter template is used for adding a Proxmox single or cluster
 installation to Zabbix.

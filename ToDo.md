@@ -5,11 +5,12 @@ This list contains items that need to be created, modified or removed
 ## Create
 
 * Node monitoring
-  * CPU
-  * Memory
-  * KSM
-  * uptime
-  * Load average
+  * [ ] CPU
+  * [ ] Memory
+  * [ ] KSM
+  * [ ] uptime
+  * [ ] Load average
+* Node graphs
 * Documentation
   * Usage of macro's
   * Image of template hierarchy
@@ -21,6 +22,7 @@ This list contains items that need to be created, modified or removed
 
 ## Modify
 * Graph color scheme
+* Graph number of CPU's in title
 * Snapshot monitoring regex full match
 * Pool monitoring regex full match
 * LXC monitoring
