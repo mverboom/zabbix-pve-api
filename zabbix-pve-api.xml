@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-03T09:54:04Z</date>
+    <date>2020-07-03T11:10:39Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -32,10 +32,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </groups>
             <applications>
                 <application>
-                    <name>PVE CT</name>
-                </application>
-                <application>
-                    <name>Test</name>
+                    <name>PVE Datacenter</name>
                 </application>
             </applications>
             <items>
@@ -48,7 +45,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <description>Item specifically does not use cluster/config/nodes as that has no information for single node systems.</description>
                     <applications>
                         <application>
-                            <name>Test</name>
+                            <name>PVE Datacenter</name>
                         </application>
                     </applications>
                     <url>https://{$PVESERVER}:8006/api2/json/cluster/resources</url>
@@ -598,6 +595,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <name>Pool check</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.lxc.poolcheck</key>
+                    <delay>15m</delay>
                     <applications>
                         <application>
                             <name>PVE LXC</name>
@@ -1189,7 +1187,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
-                            <name>{#PVENODE} disk {#PVENODEDISK} health</name>
+                            <name>Disk {#PVENODEDISK} health</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.disk.health[{#PVENODEDISK}]</key>
                             <delay>0</delay>
@@ -1211,15 +1209,15 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                             <trigger_prototypes>
                                 <trigger_prototype>
-                                    <expression>{regexp(FAIL)}=0</expression>
-                                    <name>{#PVENODE} disk {#PVENODEDISK} health failed</name>
-                                    <priority>HIGH</priority>
+                                    <expression>{regexp(PASSED)}=0</expression>
+                                    <name>{$PVENODE} disk {#PVENODEDISK} health failed</name>
+                                    <priority>DISASTER</priority>
                                     <manual_close>YES</manual_close>
                                 </trigger_prototype>
                             </trigger_prototypes>
                         </item_prototype>
                         <item_prototype>
-                            <name>{#PVENODE} disk {#PVENODEDISK} wearout</name>
+                            <name>Disk {#PVENODEDISK} wearout</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
                             <delay>0</delay>
@@ -1243,8 +1241,38 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <master_item>
                                 <key>pveapi.node.master.disks</key>
                             </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;=10</expression>
+                                    <name>{$PVENODE} disk {#PVENODEDISK} wearout 10% left</name>
+                                    <priority>HIGH</priority>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;=20</expression>
+                                    <name>{$PVENODE} disk {#PVENODEDISK} wearout 20% left</name>
+                                    <priority>AVERAGE</priority>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                            </trigger_prototypes>
                         </item_prototype>
                     </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>Disk wearout {{HOST.HOST}:pveapi.node.disk.health[{#PVENODEDISK}].last()})</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>FIXED</ymax_type_1>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>pve api node</host>
+                                        <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                     <master_item>
                         <key>pveapi.node.master.disks</key>
                     </master_item>
@@ -1310,6 +1338,47 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                         <item_prototype>
+                            <name>zpool {#PVENODEZFSPOOL} free %</name>
+                            <type>CALCULATED</type>
+                            <key>pveapi.node.zfs.freeperc[{#PVENODEZFSPOOL}]</key>
+                            <units>%</units>
+                            <params>100*(last(pveapi.node.zfs.size[{#PVENODEZFSPOOL}]) - last(pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}])) / last(pveapi.node.zfs.size[{#PVENODEZFSPOOL}]</params>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.name==&quot;{#PVENODEZFSPOOL}&quot;)].size.first()</params>
+                                </step>
+                            </preprocessing>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&lt;=2</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&gt;5</recovery_expression>
+                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 2% free</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&lt;=10</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&gt;12</recovery_expression>
+                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 10% free</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&lt;=20</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&gt;25</recovery_expression>
+                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 20% free</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
                             <name>zpool {#PVENODEZFSPOOL} free</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.zfs.free[{#PVENODEZFSPOOL}]</key>
@@ -1351,6 +1420,13 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <master_item>
                                 <key>pveapi.node.master.zfs</key>
                             </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{regexp(ONLINE)}=0</expression>
+                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} health failed</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
                         </item_prototype>
                         <item_prototype>
                             <name>zpool {#PVENODEZFSPOOL} size</name>
@@ -1618,6 +1694,57 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </screen_item>
                     </screen_items>
                 </screen>
+                <screen>
+                    <name>Node ZFS storage</name>
+                    <hsize>2</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>zpool {#PVENODEZFSPOOL} usage ({{HOST.HOST}:pveapi.node.zfs.health[{#PVENODEZFSPOOL}].last()})</name>
+                                <host>pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>1</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>zpool {#PVENODEZFSPOOL} fragmentation</name>
+                                <host>pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>1</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
             </screens>
         </template>
         <template>
@@ -1800,6 +1927,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <name>Pool check</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.qemu.poolcheck</key>
+                    <delay>15m</delay>
                     <applications>
                         <application>
                             <name>PVE Qemu</name>
@@ -2819,20 +2947,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
         </graph>
         <graph>
             <name>Uptime</name>
-            <ymin_type_1>FIXED</ymin_type_1>
-            <graph_items>
-                <graph_item>
-                    <drawtype>FILLED_REGION</drawtype>
-                    <color>F63100</color>
-                    <item>
-                        <host>pve api node</host>
-                        <key>pveapi.node.uptime</key>
-                    </item>
-                </graph_item>
-            </graph_items>
-        </graph>
-        <graph>
-            <name>Uptime</name>
             <show_work_period>NO</show_work_period>
             <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
@@ -2841,6 +2955,20 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <item>
                         <host>pve api lxc</host>
                         <key>pveapi.lxc.uptime</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>Uptime</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>F63100</color>
+                    <item>
+                        <host>pve api node</host>
+                        <key>pveapi.node.uptime</key>
                     </item>
                 </graph_item>
             </graph_items>
