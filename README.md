@@ -22,6 +22,10 @@ This is an exceprt of the features of the template set:
   * Qemu virtual machines
 * Proxmox node monitoring of
   * CPU
+  * Memory
+  * Root filesystem
+  * ZFS pools
+  * Disk smart status
 * LXC container monitoring of
   * CPU
   * Memory
