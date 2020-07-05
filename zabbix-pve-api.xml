@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-03T11:10:39Z</date>
+    <date>2020-07-05T07:04:21Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -66,8 +66,8 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <delay>0</delay>
                     <host_prototypes>
                         <host_prototype>
-                            <host>pve lxc {#PVELXCNAME}</host>
-                            <name>pve lxc {#PVELXCNAME}</name>
+                            <host>lxc {#PVELXCNAME}</host>
+                            <name>{#PVELXCNAME} (on {#PVENODE})</name>
                             <group_links>
                                 <group_link>
                                     <group>
@@ -140,8 +140,8 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <delay>0</delay>
                     <host_prototypes>
                         <host_prototype>
-                            <host>pve node {#PVENODE}</host>
-                            <name>pve node {#PVENODE}</name>
+                            <host>node {#PVENODE}</host>
+                            <name>{#PVENODE}</name>
                             <group_links>
                                 <group_link>
                                     <group>
@@ -185,8 +185,8 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <delay>0</delay>
                     <host_prototypes>
                         <host_prototype>
-                            <host>pve qemu {#PVEQEMUNAME}</host>
-                            <name>pve qemu {#PVEQEMUNAME}</name>
+                            <host>qemu {#PVEQEMUNAME}</host>
+                            <name>{#PVEQEMUNAME} (on {#PVENODE})</name>
                             <group_links>
                                 <group_link>
                                     <group>
@@ -229,6 +229,10 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
+                            <lld_macro>{#PVENODE}</lld_macro>
+                            <path>$.node</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
                             <lld_macro>{#PVEQEMUID}</lld_macro>
                             <path>$.vmid</path>
                         </lld_macro_path>
@@ -239,10 +243,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <lld_macro_path>
                             <lld_macro>{#PVEQEMUPOOL}</lld_macro>
                             <path>$.pool</path>
-                        </lld_macro_path>
-                        <lld_macro_path>
-                            <lld_macro>{#PVENODE}</lld_macro>
-                            <path>$.node</path>
                         </lld_macro_path>
                     </lld_macro_paths>
                     <preprocessing>
@@ -714,7 +714,277 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </headers>
                     <output_format>JSON</output_format>
                 </item>
+                <item>
+                    <name>pveapi master lxc snapshot</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.master.lxc.snapshot</key>
+                    <delay>5m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE LXC</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/snapshot</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                    <allow_traps>YES</allow_traps>
+                </item>
             </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>pveapi lxc snapshot discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.lxc.snapshot.discovery</key>
+                    <delay>0</delay>
+                    <lifetime>1h</lifetime>
+                    <description>Discover snapshots for lxc.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Snapshot {#PVELXCSNAPSHOT} check</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.lxc.snapshot.check[{#PVELXCSNAPSHOT}]</key>
+                            <delay>0</delay>
+                            <history>1h</history>
+                            <trends>0</trends>
+                            <applications>
+                                <application>
+                                    <name>PVE LXC</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data[?(@.name==&quot;{#PVELXCSNAPSHOT}&quot; &amp;&amp; ! (@.name =~ &quot;^{$PVESNAPSHOTEXCLUDE}&quot;))].length()</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.master.lxc.snapshot</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Snapshot {#PVELXCSNAPSHOT} create time</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}]</key>
+                            <delay>0</delay>
+                            <history>1h</history>
+                            <trends>0</trends>
+                            <units>unixtime</units>
+                            <applications>
+                                <application>
+                                    <name>PVE LXC</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data[?(@.name==&quot;{#PVELXCSNAPSHOT}&quot;)].snaptime.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.master.lxc.snapshot</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].now(0)}-&#13;
+{pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].last(0)}&gt;{$PVESNAPSHOTAGE} and {pve api lxc:pveapi.lxc.snapshot.check[{#PVELXCSNAPSHOT}].last(0)}=1</expression>
+                            <name>{$PVELXCNAME} snapshot {#PVELXCSNAPSHOT} too old</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <master_item>
+                        <key>pveapi.master.lxc.snapshot</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVELXCSNAPSHOT}</lld_macro>
+                            <path>$.name</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data[?(@.name!=&quot;current&quot;)]</params>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>{ &quot;data&quot;:[] }</error_handler_params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+            <screens>
+                <screen>
+                    <name>LXC overview</name>
+                    <hsize>2</hsize>
+                    <vsize>4</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>3</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <key>pveapi.lxc.status</key>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>1</elements>
+                            <valign>1</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>CPU</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Uptime</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Memory usage</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>2</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Swap usage</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>2</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Disk usage</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>3</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Network traffic</name>
+                                <host>pve api lxc</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>3</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
         </template>
         <template>
             <template>pve api node</template>
@@ -900,6 +1170,11 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <key>pveapi.node.master</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/status</url>
                     <headers>
                         <header>
@@ -932,11 +1207,36 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
+                    <name>pveapi master node lvm</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.node.master.lvm</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/lvm</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                </item>
+                <item>
                     <name>pveapi master node zfs</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.zfs</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/zfs</url>
                     <headers>
                         <header>
@@ -1259,7 +1559,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </item_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>Disk wearout {{HOST.HOST}:pveapi.node.disk.health[{#PVENODEDISK}].last()})</name>
+                            <name>Disk wearout ({{HOST.HOST}:pveapi.node.disk.health[{#PVENODEDISK}].last()})</name>
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>FIXED</ymax_type_1>
                             <graph_items>
@@ -1286,6 +1586,104 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>pveapi node lvm discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.node.lvm.discovery</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>LVM {#PVENODELVM} free</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvm.free[{#PVENODELVM}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.children.[?(@.name==&quot;{#PVENODELVM}&quot;)].free.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvm</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVM {#PVENODELVM} size</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvm.size[{#PVENODELVM}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.children.[?(@.name==&quot;{#PVENODELVM}&quot;)].size.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvm</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVM {#PVENODELVM} used</name>
+                            <type>CALCULATED</type>
+                            <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
+                            <units>B</units>
+                            <params>last(pveapi.node.lvm.size[{#PVENODELVM}]) - last(pveapi.node.lvm.free[{#PVENODELVM}])</params>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>lvm {#PVENODELVM} usage</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>ITEM</ymax_type_1>
+                            <ymax_item_1>
+                                <host>pve api node</host>
+                                <key>pveapi.node.lvm.size[{#PVENODELVM}]</key>
+                            </ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>FILLED_REGION</drawtype>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>pve api node</host>
+                                        <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>pveapi.node.master.lvm</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODELVM}</lld_macro>
+                            <path>$.name</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data.children</params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -1512,7 +1910,36 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </discovery_rules>
             <screens>
                 <screen>
-                    <name>Node overview</name>
+                    <name>Disk</name>
+                    <hsize>1</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>19</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
+                                <host>pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+                <screen>
+                    <name>Overview</name>
                     <hsize>2</hsize>
                     <vsize>4</vsize>
                     <screen_items>
@@ -1695,7 +2122,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </screen_items>
                 </screen>
                 <screen>
-                    <name>Node ZFS storage</name>
+                    <name>ZFS storage</name>
                     <hsize>2</hsize>
                     <vsize>1</vsize>
                     <screen_items>
@@ -1786,6 +2213,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <name>pveapi master qemu snapshot</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.master.qemu.snapshot</key>
+                    <delay>5m</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <applications>
@@ -1916,7 +2344,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <type>CALCULATED</type>
                     <key>pveapi.qemu.memfree</key>
                     <units>%</units>
-                    <params>100*(last(pveapi.qemu.maxmem) - last(pveapi.qemu.mem) / (last(pveapi.qemu.maxmem))</params>
+                    <params>100*((last(pveapi.qemu.maxmem) - last(pveapi.qemu.mem)) / last(pveapi.qemu.maxmem))</params>
                     <applications>
                         <application>
                             <name>PVE Qemu</name>
@@ -2021,6 +2449,11 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <key>pveapi.qemu.blockdev.readiops[{#PVEQEMUBLOCKDEV}]</key>
                             <delay>0</delay>
                             <units>iops</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Qemu</name>
+                                </application>
+                            </applications>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
@@ -2041,6 +2474,11 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <key>pveapi.qemu.blockdev.read[{#PVEQEMUBLOCKDEV}]</key>
                             <delay>0</delay>
                             <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Qemu</name>
+                                </application>
+                            </applications>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
@@ -2061,6 +2499,11 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <key>pveapi.qemu.blockdev.writeiops[{#PVEQEMUBLOCKDEV}]</key>
                             <delay>0</delay>
                             <units>iops</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Qemu</name>
+                                </application>
+                            </applications>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
@@ -2081,6 +2524,11 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <key>pveapi.qemu.blockdev.write[{#PVEQEMUBLOCKDEV}]</key>
                             <delay>0</delay>
                             <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Qemu</name>
+                                </application>
+                            </applications>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
@@ -2301,6 +2749,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <type>DEPENDENT</type>
                     <key>pveapi.qemu.snapshot.discovery</key>
                     <delay>0</delay>
+                    <lifetime>1h</lifetime>
                     <description>Discover snapshots for qemu.</description>
                     <item_prototypes>
                         <item_prototype>
@@ -2308,6 +2757,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <type>DEPENDENT</type>
                             <key>pveapi.qemu.snapshot.check[{#PVEQEMUSNAPSHOT}]</key>
                             <delay>0</delay>
+                            <history>1h</history>
+                            <trends>0</trends>
                             <applications>
                                 <application>
                                     <name>PVE Qemu</name>
@@ -2330,6 +2781,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <type>DEPENDENT</type>
                             <key>pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}]</key>
                             <delay>0</delay>
+                            <history>1h</history>
+                            <trends>0</trends>
                             <units>unixtime</units>
                             <applications>
                                 <application>
@@ -2369,6 +2822,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data[?(@.name!=&quot;current&quot;)]</params>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>{ &quot;data&quot;:[] }</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -2604,7 +3059,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.uptime.change(0)}&lt;0 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{pve api lxc:pveapi.lxc.uptime.change(0)}&lt;0 and {pve api lxc:pveapi.lxc.status.regexp(running)}=1 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <name>{$PVELXCNAME} is restarted</name>
             <priority>INFO</priority>
             <description>{$PVELXCNAME} restarted</description>
