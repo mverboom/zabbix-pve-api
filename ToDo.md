@@ -22,10 +22,10 @@ This list contains items that need to be created, modified or removed
     * [x] uptime
     * [x] Load average
     * [x] Root filesystem
-    * [ ] Smart status
-    * [ ] SSD wearout
-    * [ ] Storage ZFS
-    * [ ] Storage LVM
+    * [x] Smart status
+    * [x] SSD wearout
+    * [x] Storage ZFS
+    * [x] Storage LVM
     * [ ] Storage ThinLVM
     * [ ] Storage Directory
   * Graphs
@@ -36,33 +36,81 @@ This list contains items that need to be created, modified or removed
     * [x] KSM
     * [x] Uptime
     * [x] Root filesystem
-    * [ ] Smart status
+    * [x] SSD wearout
+    * [x] ZFS usage
+    * [x] ZFS fragmentation
+    * [x] Logical Volume usage
   * Triggers
     * [ ] CPU
     * [ ] Memory
     * [ ] Swap
     * [ ] Load average
     * [ ] Root filesystem
-    * [ ] Smart status
-    * [ ] SSD wearout
+    * [x] Smart status
+    * [x] SSD wearout
+    * [x] ZFS health
+    * [x] ZFS free space
+  * Screens
+    * [x] Overview
+    * [x] Disks
+    * [x] ZFS
+    * [ ] LVM
+* Qemu template
+  * Monitoring
+    * [x] CPU
+    * [x] Memory
+    * [x] Network
+    * [x] Disk IO
+    * [x] Snapshots
+    * [x] Uptime
+  * Graphs
+    * [x] CPU
+    * [x] Memory
+    * [x] Network
+    * [x] Disk IO
+    * [x] Uptime
+  * Triggers
+    * [x] CPU
+    * [x] Memory
+    * [x] Run status
+    * [x] Snapshot age
+  * Screens
+    * [x] Overview
+* LXC template
+  * Monitoring
+    * [x] CPU
+    * [x] Memory
+    * [x] Swap
+    * [x] Network
+    * [x] Disk space
+    * [x] Disk IO
+    * [x] Snapshots
+    * [x] Uptime
+  * Graphs
+    * [x] CPU
+    * [x] Memory
+    * [x] Swap
+    * [x] Network
+    * [x] Disk space
+    * [x] Disk IO
+    * [x] Uptime
+  * Triggers
+    * [x] CPU
+    * [x] Memory
+    * [x] Disk space
+    * [x] Run status
+    * [x] Snapshot age
+  * Screens
+    * [x] Overview
 * Documentation
-  * [ ] Usage of macro's
+  * [x] Usage of macro's
   * [ ] Image of template hierarchy
   * [ ] Authentication within proxmox
   * [ ] Pool based exclusion of triggers
   * [ ] Snapshot age alerting
   * [ ] Snapshot age alerting exclusion
-* Screens
-  * [ ] Proxmox node overview
-  * [ ] Proxmox node disks
-  * [ ] Proxmox node ZFS storage
-  * [ ] Proxmox node LVM storage
-  * [ ] Proxmox node ThinLVM storage
-  * [ ] Proxmox node Directory storage
-  * [ ] LXC container
-  * [ ] Qemu virtual machine
 
-## Modify
+## Modify/verify
 
 * [ ] Graph color scheme
 * [ ] Graph number of CPU's in title
