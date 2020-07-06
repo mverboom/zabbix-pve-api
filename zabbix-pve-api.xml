@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-05T07:04:21Z</date>
+    <date>2020-07-06T17:58:33Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -18,8 +18,8 @@
     </groups>
     <templates>
         <template>
-            <template>pve api datacenter</template>
-            <name>pve api datacenter</name>
+            <template>Template pve api datacenter</template>
+            <name>Template pve api datacenter</name>
             <description>This template monitors a Proxmox system. It requires access to port 8006 either from the zabbix server or from a zabbix proxy. It will not work through a zabbix agent.&#13;
 The template requires a Proxmox API key for access to the Proxmox API. The values should be set in the following macro's:&#13;
 {$PVESERVER} : Server to talk to for the API&#13;
@@ -82,7 +82,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </group_prototypes>
                             <templates>
                                 <template>
-                                    <name>pve api lxc</name>
+                                    <name>Template pve api lxc</name>
                                 </template>
                             </templates>
                             <macros>
@@ -151,7 +151,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </group_links>
                             <templates>
                                 <template>
-                                    <name>pve api node</name>
+                                    <name>Template pve api node</name>
                                 </template>
                             </templates>
                             <macros>
@@ -201,7 +201,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </group_prototypes>
                             <templates>
                                 <template>
-                                    <name>pve api qemu</name>
+                                    <name>Template pve api qemu</name>
                                 </template>
                             </templates>
                             <macros>
@@ -272,9 +272,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </macros>
         </template>
         <template>
-            <template>pve api lxc</template>
-            <name>pve api lxc</name>
-            <description>This template is used by pve api datacenter. Please don't use directly.</description>
+            <template>Template pve api lxc</template>
+            <name>Template pve api lxc</name>
+            <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
             <groups>
                 <group>
                     <name>PVE LXC</name>
@@ -796,8 +796,8 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].now(0)}-&#13;
-{pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].last(0)}&gt;{$PVESNAPSHOTAGE} and {pve api lxc:pveapi.lxc.snapshot.check[{#PVELXCSNAPSHOT}].last(0)}=1</expression>
+                            <expression>{Template pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].now(0)}-&#13;
+{Template pve api lxc:pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}].last(0)}&gt;{$PVESNAPSHOTAGE} and {Template pve api lxc:pveapi.lxc.snapshot.check[{#PVELXCSNAPSHOT}].last(0)}=1</expression>
                             <name>{$PVELXCNAME} snapshot {#PVELXCSNAPSHOT} too old</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
@@ -833,7 +833,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <key>pveapi.lxc.status</key>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -855,7 +855,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>CPU</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -877,7 +877,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Uptime</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -899,7 +899,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Memory usage</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -921,7 +921,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Swap usage</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -943,7 +943,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Disk usage</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -965,7 +965,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Network traffic</name>
-                                <host>pve api lxc</host>
+                                <host>Template pve api lxc</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -987,9 +987,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </screens>
         </template>
         <template>
-            <template>pve api node</template>
-            <name>pve api node</name>
-            <description>This template is used by pve api datacenter. Please don't use directly.</description>
+            <template>Template pve api node</template>
+            <name>Template pve api node</name>
+            <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
             <groups>
                 <group>
                     <name>PVE</name>
@@ -1227,6 +1227,26 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
+                    <name>pveapi master node services</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.node.master.services</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/services</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                </item>
+                <item>
                     <name>pveapi master node zfs</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.zfs</key>
@@ -1266,6 +1286,44 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <master_item>
                         <key>pveapi.node.master</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>Memory free percent</name>
+                    <type>CALCULATED</type>
+                    <key>pveapi.node.mem.freeperc</key>
+                    <units>%</units>
+                    <params>100*(last(pveapi.node.mem.free) / last(pveapi.node.mem.size))</params>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data.swap.free</params>
+                        </step>
+                    </preprocessing>
+                    <triggers>
+                        <trigger>
+                            <expression>{avg(10m)}&lt;5</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{avg(10m)}&gt;10</recovery_expression>
+                            <name>Memory less than 5% free on {$PVENODE}</name>
+                            <priority>WARNING</priority>
+                            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{avg(10m)}&lt;50</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{avg(10m)}&gt;60</recovery_expression>
+                            <name>Swap more than 50% used on {$PVENODE}</name>
+                            <priority>WARNING</priority>
+                            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Memory size</name>
@@ -1351,6 +1409,35 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <master_item>
                         <key>pveapi.node.master</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>Rootfs free percent</name>
+                    <type>CALCULATED</type>
+                    <key>pveapi.node.rootfs.freeperc</key>
+                    <units>%</units>
+                    <params>100*(last(pveapi.node.rootfs.avail) / last(pveapi.node.rootfs.size))</params>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data.swap.free</params>
+                        </step>
+                    </preprocessing>
+                    <triggers>
+                        <trigger>
+                            <expression>{avg(10m)}&lt;10</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{avg(10m)}&gt;1510</recovery_expression>
+                            <name>RootFS has less than 10% free on {$PVENODE}</name>
+                            <priority>WARNING</priority>
+                            <description>{$PVENODE} has less then 10% diskspace free over the last 10 minutes</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Root filesystem size</name>
@@ -1566,7 +1653,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 <graph_item>
                                     <color>199C0D</color>
                                     <item>
-                                        <host>pve api node</host>
+                                        <host>Template pve api node</host>
                                         <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
                                     </item>
                                 </graph_item>
@@ -1656,7 +1743,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>ITEM</ymax_type_1>
                             <ymax_item_1>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                                 <key>pveapi.node.lvm.size[{#PVENODELVM}]</key>
                             </ymax_item_1>
                             <graph_items>
@@ -1664,7 +1751,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                     <drawtype>FILLED_REGION</drawtype>
                                     <color>2774A4</color>
                                     <item>
-                                        <host>pve api node</host>
+                                        <host>Template pve api node</host>
                                         <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
                                     </item>
                                 </graph_item>
@@ -1684,6 +1771,58 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data.children</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>pveapi node services discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.node.services.discovery</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>service {#PVENODESERVICE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.services.state[{#PVENODESERVICE}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.name==&quot;{#PVENODESERVICE}&quot;)].state.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.services</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{regexp(running)}=0</expression>
+                                    <name>{$PVENODE} service {#PVENODESERVICE} not running</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>pveapi.node.master.services</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODESERVICE}</lld_macro>
+                            <path>$.name</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data</params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -1857,7 +1996,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 <graph_item>
                                     <color>2774A4</color>
                                     <item>
-                                        <host>pve api node</host>
+                                        <host>Template pve api node</host>
                                         <key>pveapi.node.zfs.frag[{#PVENODEZFSPOOL}]</key>
                                     </item>
                                 </graph_item>
@@ -1869,14 +2008,14 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>ITEM</ymax_type_1>
                             <ymax_item_1>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                                 <key>pveapi.node.zfs.size[{#PVENODEZFSPOOL}]</key>
                             </ymax_item_1>
                             <graph_items>
                                 <graph_item>
                                     <color>F63100</color>
                                     <item>
-                                        <host>pve api node</host>
+                                        <host>Template pve api node</host>
                                         <key>pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}]</key>
                                     </item>
                                 </graph_item>
@@ -1884,7 +2023,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                     <sortorder>1</sortorder>
                                     <color>199C0D</color>
                                     <item>
-                                        <host>pve api node</host>
+                                        <host>Template pve api node</host>
                                         <key>pveapi.node.zfs.free[{#PVENODEZFSPOOL}]</key>
                                     </item>
                                 </graph_item>
@@ -1919,7 +2058,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -1948,7 +2087,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <key>pveapi.node.pveversion</key>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -1970,7 +2109,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <key>pveapi.node.kernelversion</key>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -1992,7 +2131,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>CPU ({{HOST.HOST}:pveapi.node.cpus.last(0)} CPU(s))</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2014,7 +2153,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Load average</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2036,7 +2175,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Memory ({{HOST.HOST}:pveapi.node.mem.total.last(0)})</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2058,7 +2197,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Swap ({{HOST.HOST}:pveapi.node.swap.total.last(0)})</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2080,7 +2219,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>Root filesystem ({{HOST.HOST}:pveapi.node.rootfs.total.last(0)})</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2102,7 +2241,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>KSM</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2131,7 +2270,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>zpool {#PVENODEZFSPOOL} usage ({{HOST.HOST}:pveapi.node.zfs.health[{#PVENODEZFSPOOL}].last()})</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2153,7 +2292,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <style>0</style>
                             <resource>
                                 <name>zpool {#PVENODEZFSPOOL} fragmentation</name>
-                                <host>pve api node</host>
+                                <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2175,9 +2314,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </screens>
         </template>
         <template>
-            <template>pve api qemu</template>
-            <name>pve api qemu</name>
-            <description>This template is used by pve api datacenter. Please don't use directly.</description>
+            <template>Template pve api qemu</template>
+            <name>Template pve api qemu</name>
+            <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
             <groups>
                 <group>
                     <name>PVE Qemu</name>
@@ -2552,7 +2691,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <graph_item>
                                     <color>2774A4</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.blockdev.readiops[{#PVEQEMUBLOCKDEV}]</key>
                                     </item>
                                 </graph_item>
@@ -2560,7 +2699,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <sortorder>1</sortorder>
                                     <color>F7941D</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.blockdev.writeiops[{#PVEQEMUBLOCKDEV}]</key>
                                     </item>
                                 </graph_item>
@@ -2573,7 +2712,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <graph_item>
                                     <color>199C0D</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.blockdev.read[{#PVEQEMUBLOCKDEV}]</key>
                                     </item>
                                 </graph_item>
@@ -2581,7 +2720,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <sortorder>1</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.blockdev.write[{#PVEQEMUBLOCKDEV}]</key>
                                     </item>
                                 </graph_item>
@@ -2696,7 +2835,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <graph_item>
                                     <color>199C0D</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.nicin[{#PVEQEMUNIC}]</key>
                                     </item>
                                 </graph_item>
@@ -2704,7 +2843,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <sortorder>1</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>pve api qemu</host>
+                                        <host>Template pve api qemu</host>
                                         <key>pveapi.qemu.nicout[{#PVEQEMUNIC}]</key>
                                     </item>
                                 </graph_item>
@@ -2802,8 +2941,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{pve api qemu:pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}].now(0)}-&#13;
-{pve api qemu:pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}].last(0)}&gt;{$PVESNAPSHOTAGE} and {pve api qemu:pveapi.qemu.snapshot.check[{#PVEQEMUSNAPSHOT}].last(0)}=1</expression>
+                            <expression>{Template pve api qemu:pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}].now(0)}-&#13;
+{Template pve api qemu:pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}].last(0)}&gt;{$PVESNAPSHOTAGE} and {Template pve api qemu:pveapi.qemu.snapshot.check[{#PVEQEMUSNAPSHOT}].last(0)}=1</expression>
                             <name>{$PVEQEMUNAME} snapshot {#PVEQEMUSNAPSHOT} too old</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
@@ -2839,7 +2978,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <key>pveapi.qemu.status</key>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2861,7 +3000,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>CPU ({{HOST.HOST}:pveapi.qemu.cpus.last(0)} CPU(s))</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2883,7 +3022,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>Memory usage</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2905,7 +3044,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>Uptime</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2927,7 +3066,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>{#PVEQEMUNIC} traffic</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2949,7 +3088,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>{#PVEQEMUBLOCKDEV} read/write</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2971,7 +3110,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <style>0</style>
                             <resource>
                                 <name>{#PVEQEMUBLOCKDEV} iops</name>
-                                <host>pve api qemu</host>
+                                <host>Template pve api qemu</host>
                             </resource>
                             <width>500</width>
                             <height>100</height>
@@ -2995,92 +3134,110 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
     </templates>
     <triggers>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.cpu.avg(15m)}&gt;80 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.cpu.avg(15m)}&gt;80 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api lxc:pveapi.lxc.cpu.avg(15m)}&lt;70</recovery_expression>
+            <recovery_expression>{Template pve api lxc:pveapi.lxc.cpu.avg(15m)}&lt;70</recovery_expression>
             <name>CPU over 80% for last 15 minutes on {$PVELXCNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVELXCNAME} has more then 80% CPU usage over the last 15 minutes</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api qemu:pveapi.qemu.cpu.avg(15m)}&gt;80 and {pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
+            <expression>({Template pve api node:pveapi.node.cpu.user.avg(15m)} + {Template pve api node:pveapi.node.cpu.wait.avg(15m)}) &gt; 80</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api qemu:pveapi.qemu.cpu.avg(15m)}&lt;70</recovery_expression>
+            <recovery_expression>({Template pve api node:pveapi.node.cpu.user.avg(15m)} + {Template pve api node:pveapi.node.cpu.wait.avg(15m)}) &lt; 70</recovery_expression>
+            <name>CPU over 80% for last 15 minutes on {$PVENODE}</name>
+            <priority>WARNING</priority>
+            <description>{$PVENODE} has more then 80% CPU usage over the last 15 minutes</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>{Template pve api qemu:pveapi.qemu.cpu.avg(15m)}&gt;80 and {Template pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template pve api qemu:pveapi.qemu.cpu.avg(15m)}&lt;70</recovery_expression>
             <name>CPU over 80% for last 15 minutes on {$PVEQEMUNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVEQEMUNAME} has more then 80% CPU usage over the last 15 minutes</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;1 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;1 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;3</recovery_expression>
+            <recovery_expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;3</recovery_expression>
             <name>Disk full on {$PVELXCNAME}</name>
             <priority>DISASTER</priority>
             <description>{$PVELXCNAME} has no diskspace left over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;5 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;5 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;7</recovery_expression>
+            <recovery_expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;7</recovery_expression>
             <name>Disk less than 5% free on {$PVELXCNAME}</name>
             <priority>HIGH</priority>
             <description>{$PVELXCNAME} has less then 5% diskspace free over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;10 and&#13;
-{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;5 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&lt;10 and&#13;
+{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;5 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;15</recovery_expression>
+            <recovery_expression>{Template pve api lxc:pveapi.lxc.diskfree.avg(10m)}&gt;15</recovery_expression>
             <name>Disk less than 10% free on {$PVELXCNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVELXCNAME} has less then 10% diskspace free over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.memfree.avg(10m)}&lt;5 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.memfree.avg(10m)}&lt;5 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api lxc:pveapi.lxc.memfree.avg(10m)}&gt;10</recovery_expression>
+            <recovery_expression>{Template pve api lxc:pveapi.lxc.memfree.avg(10m)}&gt;10</recovery_expression>
             <name>Memory less than 5% free on {$PVELXCNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVELXCNAME} has less then 5% memory + swap free over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api qemu:pveapi.qemu.memfree.avg(10m)}&lt;5 and {pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
+            <expression>{Template pve api qemu:pveapi.qemu.memfree.avg(10m)}&lt;5 and {Template pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{pve api qemu:pveapi.qemu.memfree.avg(10m)}&gt;10</recovery_expression>
+            <recovery_expression>{Template pve api qemu:pveapi.qemu.memfree.avg(10m)}&gt;10</recovery_expression>
             <name>Memory less than 5% free on {$PVEQEMUNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVEQEMUNAME} has less then 5% memory free over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.uptime.change(0)}&lt;0 and {pve api lxc:pveapi.lxc.status.regexp(running)}=1 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.uptime.change(0)}&lt;0 and {Template pve api lxc:pveapi.lxc.status.regexp(running)}=1 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <name>{$PVELXCNAME} is restarted</name>
             <priority>INFO</priority>
             <description>{$PVELXCNAME} restarted</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api lxc:pveapi.lxc.status.regexp(stopped)}=1 and {pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <expression>{Template pve api lxc:pveapi.lxc.status.regexp(stopped)}=1 and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
             <name>{$PVELXCNAME} is stopped</name>
             <priority>WARNING</priority>
             <description>{$PVELXCNAME} is stopped.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api qemu:pveapi.qemu.uptime.change(0)}&lt;0 and {pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
+            <expression>{Template pve api node:pveapi.node.uptime.change(0)}&lt;0</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template pve api node:pveapi.node.cpu.idle.avg(15m)}&gt;30</recovery_expression>
+            <name>{$PVENODE} is restarted</name>
+            <priority>INFO</priority>
+            <description>{$PVENODE} restarted</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>{Template pve api qemu:pveapi.qemu.uptime.change(0)}&lt;0 and {Template pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
             <name>{$PVEQEMUNAME} is restarted</name>
             <priority>INFO</priority>
             <description>{$PVEQEMUNAME} restarted</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{pve api qemu:pveapi.qemu.status.regexp(stopped)}=1 and {pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
+            <expression>{Template pve api qemu:pveapi.qemu.status.regexp(stopped)}=1 and {Template pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
             <name>{$PVEQEMUNAME} is stopped</name>
             <priority>WARNING</priority>
             <description>{$PVEQEMUNAME} is stopped.</description>
@@ -3096,7 +3253,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.cpu</key>
                     </item>
                 </graph_item>
@@ -3111,7 +3268,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.cpu.wait</key>
                     </item>
                 </graph_item>
@@ -3119,7 +3276,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>FFBF00</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.cpu.user</key>
                     </item>
                 </graph_item>
@@ -3134,7 +3291,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api qemu</host>
+                        <host>Template pve api qemu</host>
                         <key>pveapi.qemu.cpu</key>
                     </item>
                 </graph_item>
@@ -3147,7 +3304,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.diskread</key>
                     </item>
                 </graph_item>
@@ -3155,7 +3312,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.diskwrite</key>
                     </item>
                 </graph_item>
@@ -3166,7 +3323,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api lxc</host>
+                <host>Template pve api lxc</host>
                 <key>pveapi.lxc.maxdisk</key>
             </ymax_item_1>
             <graph_items>
@@ -3174,7 +3331,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>33FF33</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.maxdisk</key>
                     </item>
                 </graph_item>
@@ -3182,7 +3339,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.disk</key>
                     </item>
                 </graph_item>
@@ -3195,7 +3352,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.ksm</key>
                     </item>
                 </graph_item>
@@ -3209,7 +3366,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.load</key>
                     </item>
                 </graph_item>
@@ -3221,7 +3378,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api node</host>
+                <host>Template pve api node</host>
                 <key>pveapi.node.mem.total</key>
             </ymax_item_1>
             <graph_items>
@@ -3229,7 +3386,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.mem.used</key>
                     </item>
                 </graph_item>
@@ -3237,7 +3394,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.mem.free</key>
                     </item>
                 </graph_item>
@@ -3248,7 +3405,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api lxc</host>
+                <host>Template pve api lxc</host>
                 <key>pveapi.lxc.maxmem</key>
             </ymax_item_1>
             <graph_items>
@@ -3256,7 +3413,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>33FF33</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.maxmem</key>
                     </item>
                 </graph_item>
@@ -3264,7 +3421,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.mem</key>
                     </item>
                 </graph_item>
@@ -3275,7 +3432,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api qemu</host>
+                <host>Template pve api qemu</host>
                 <key>pveapi.qemu.maxmem</key>
             </ymax_item_1>
             <graph_items>
@@ -3283,7 +3440,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>33FF33</color>
                     <item>
-                        <host>pve api qemu</host>
+                        <host>Template pve api qemu</host>
                         <key>pveapi.qemu.maxmem</key>
                     </item>
                 </graph_item>
@@ -3291,7 +3448,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api qemu</host>
+                        <host>Template pve api qemu</host>
                         <key>pveapi.qemu.mem</key>
                     </item>
                 </graph_item>
@@ -3304,7 +3461,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.netin</key>
                     </item>
                 </graph_item>
@@ -3312,7 +3469,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.netout</key>
                     </item>
                 </graph_item>
@@ -3325,14 +3482,14 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api node</host>
+                <host>Template pve api node</host>
                 <key>pveapi.node.rootfs.total</key>
             </ymax_item_1>
             <graph_items>
                 <graph_item>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.rootfs.used</key>
                     </item>
                 </graph_item>
@@ -3340,7 +3497,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.rootfs.avail</key>
                     </item>
                 </graph_item>
@@ -3352,14 +3509,14 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api node</host>
+                <host>Template pve api node</host>
                 <key>pveapi.node.swap.total</key>
             </ymax_item_1>
             <graph_items>
                 <graph_item>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.swap.used</key>
                     </item>
                 </graph_item>
@@ -3367,7 +3524,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.swap.free</key>
                     </item>
                 </graph_item>
@@ -3378,7 +3535,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymin_type_1>FIXED</ymin_type_1>
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
-                <host>pve api lxc</host>
+                <host>Template pve api lxc</host>
                 <key>pveapi.lxc.maxswap</key>
             </ymax_item_1>
             <graph_items>
@@ -3386,7 +3543,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>33FF33</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.maxswap</key>
                     </item>
                 </graph_item>
@@ -3394,7 +3551,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <sortorder>1</sortorder>
                     <color>F63100</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.swap</key>
                     </item>
                 </graph_item>
@@ -3408,7 +3565,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 <graph_item>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api lxc</host>
+                        <host>Template pve api lxc</host>
                         <key>pveapi.lxc.uptime</key>
                     </item>
                 </graph_item>
@@ -3422,7 +3579,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>F63100</color>
                     <item>
-                        <host>pve api node</host>
+                        <host>Template pve api node</host>
                         <key>pveapi.node.uptime</key>
                     </item>
                 </graph_item>
@@ -3436,7 +3593,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <drawtype>FILLED_REGION</drawtype>
                     <color>199C0D</color>
                     <item>
-                        <host>pve api qemu</host>
+                        <host>Template pve api qemu</host>
                         <key>pveapi.qemu.uptime</key>
                     </item>
                 </graph_item>
