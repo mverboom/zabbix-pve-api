@@ -28,6 +28,8 @@ This list contains items that need to be created, modified or removed
     * [x] Storage LVM
     * [ ] Storage ThinLVM
     * [ ] Storage Directory
+    * [ ] Services
+    * [ ] Datastores
   * Graphs
     * [x] CPU
     * [x] Memory
@@ -40,16 +42,19 @@ This list contains items that need to be created, modified or removed
     * [x] ZFS usage
     * [x] ZFS fragmentation
     * [x] Logical Volume usage
+    * [ ] Datastores
   * Triggers
-    * [ ] CPU
-    * [ ] Memory
-    * [ ] Swap
+    * [x] CPU
+    * [x] Memory
+    * [x] Swap
     * [ ] Load average
-    * [ ] Root filesystem
+    * [x] Root filesystem
     * [x] Smart status
     * [x] SSD wearout
     * [x] ZFS health
     * [x] ZFS free space
+    * [ ] Node services
+    * [ ] Datastores
   * Screens
     * [x] Overview
     * [x] Disks
@@ -74,6 +79,7 @@ This list contains items that need to be created, modified or removed
     * [x] Memory
     * [x] Run status
     * [x] Snapshot age
+    * [ ] Locked system
   * Screens
     * [x] Overview
 * LXC template
@@ -100,6 +106,7 @@ This list contains items that need to be created, modified or removed
     * [x] Disk space
     * [x] Run status
     * [x] Snapshot age
+    * [ ] Locked system
   * Screens
     * [x] Overview
 * Documentation

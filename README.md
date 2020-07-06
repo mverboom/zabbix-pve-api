@@ -2,15 +2,18 @@
 
 This template set uses the Proxmox Virtual Environment API to monitor sytems.
 
+This template set was developed on Zabbix 5.0 in combination with Proxmox 6.
+It might work on older combinations, but this was not tested.
+
 The template set consists of 4 templates, of which only 1 should be manually
 assigned:
 
-* pve api datacenter
-  * pve api node
-  * pve api lxc
-  * pve api qemu
+* Template pve api datacenter
+  * Template pve api node
+  * Template pve api lxc
+  * Template pve api qemu
 
-The pve api datacenter template is used for adding a Proxmox single or cluster
+The Template pve api datacenter is used for adding a Proxmox single or cluster
 installation to Zabbix.
 
 ## Features
@@ -43,6 +46,31 @@ This is an exceprt of the features of the template set:
   * Snapshots
 
 ## Architecture
+
+The idea behind this template set is to monitor a Proxmox "datacenter" through
+the Proxmox API. This should allow for a simple way to roll out monitoring of
+systems. The disadvantage is that only data that is available through the Proxmox
+API will be available for monitoring.
+
+### Authentication
+
+The normal Proxmox API login process requires multiple steps to authenticate and
+retrieve a cookie. This isn't something that can be done with Zabbix. However,
+Proxmox also has an API Token interface, which is usable through Zabbix. There is
+one downside, this API Token needs to be submitted through an HTTP header. The
+simplest way to do an HTTP request is through the Zabbix Agent. This method does
+not allow for sending headers. The alternative is the HTTP Request method.
+
+The HTTP Request method
+
+The template set consists of 4 templates:
+
+* Template pve api datacenter
+  * Template pve api node
+  * Template pve api lxc
+  * Template pve api qemu
+
+The pve api datacenter template
 
 ## Configuration
 
