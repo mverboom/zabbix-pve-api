@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-09T18:02:45Z</date>
+    <date>2020-07-09T18:40:08Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -1412,7 +1412,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                 <item>
                     <name>pveapi node master storage</name>
                     <type>HTTP_AGENT</type>
-                    <key>pveapi.node.master.storage</key>
+                    <key>pveapi.node.master.storagepools</key>
                     <delay>1h</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -1855,9 +1855,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <item_prototype>
                             <name>LVM {#PVENODELVM} used</name>
                             <type>CALCULATED</type>
-                            <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
+                            <key>pveapi.node.lvm.used[{#PVENODELV}]</key>
                             <units>B</units>
-                            <params>last(pveapi.node.lvm.size[{#PVENODELVM}]) - last(pveapi.node.lvm.free[{#PVENODELVM}])</params>
+                            <params>pveapi.node.lvm.size[{#PVENODELV}] - pveapi.node.lvm.free[{#PVENODELV}]</params>
                             <applications>
                                 <application>
                                     <name>PVE Node</name>
@@ -1867,7 +1867,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </item_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>lvm {#PVENODELVM} usage</name>
+                            <name>LVM {#PVENODELVM} used</name>
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>ITEM</ymax_type_1>
                             <ymax_item_1>
@@ -1877,10 +1877,10 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <graph_items>
                                 <graph_item>
                                     <drawtype>FILLED_REGION</drawtype>
-                                    <color>2774A4</color>
+                                    <color>199C0D</color>
                                     <item>
                                         <host>Template pve api node</host>
-                                        <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
+                                        <key>pveapi.node.lvm.used[{#PVENODELV}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -1930,41 +1930,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>LVMThin {#PVENODELVMTHIN} metadata used percentage</name>
-                            <type>CALCULATED</type>
-                            <key>pveapi.node.lvmthin.metadatausedperc[{#PVENODELVMTHIN}]</key>
-                            <units>%</units>
-                            <params>100 * (last(pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}]) / last(pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}]) )</params>
-                            <applications>
-                                <application>
-                                    <name>PVE Node</name>
-                                </application>
-                            </applications>
-                            <trigger_prototypes>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;98</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;954</recovery_expression>
-                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 2% free</name>
-                                    <priority>DISASTER</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;90</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;88</recovery_expression>
-                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 10% free</name>
-                                    <priority>HIGH</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;80</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;75</recovery_expression>
-                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 20% free</name>
-                                    <priority>WARNING</priority>
-                                </trigger_prototype>
-                            </trigger_prototypes>
-                        </item_prototype>
-                        <item_prototype>
                             <name>LVMThin {#PVENODELVMTHIN} metadata used</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}]</key>
@@ -2007,41 +1972,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>LVMThin {#PVENODELVMTHIN} used percentage</name>
-                            <type>CALCULATED</type>
-                            <key>pveapi.node.lvmthin.usedperc[{#PVENODELVMTHIN}]</key>
-                            <units>%</units>
-                            <params>100 * (last(pveapi.node.lvmthin.used[{#PVENODELVMTHIN}]) / last(pveapi.node.lvmthin.size[{#PVENODELVMTHIN}]) )</params>
-                            <applications>
-                                <application>
-                                    <name>PVE Node</name>
-                                </application>
-                            </applications>
-                            <trigger_prototypes>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;98</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;954</recovery_expression>
-                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 2% free</name>
-                                    <priority>DISASTER</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;90</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;88</recovery_expression>
-                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 10% free</name>
-                                    <priority>HIGH</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&gt;80</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&lt;75</recovery_expression>
-                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 20% free</name>
-                                    <priority>WARNING</priority>
-                                </trigger_prototype>
-                            </trigger_prototypes>
-                        </item_prototype>
-                        <item_prototype>
                             <name>LVMThin {#PVENODELVMTHIN} used</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.lvmthin.used[{#PVENODELVMTHIN}]</key>
@@ -2063,6 +1993,73 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 98</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)}))&#13;
+&lt; 95</recovery_expression>
+                            <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 2% free</name>
+                            <priority>DISASTER</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 90</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)})) &lt; 88</recovery_expression>
+                            <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 10% free</name>
+                            <priority>HIGH</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 80</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}].last(0)}))&#13;
+&lt; 75</recovery_expression>
+                            <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 20% free</name>
+                            <priority>WARNING</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 98</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&lt; 95</recovery_expression>
+                            <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 2% free</name>
+                            <priority>DISASTER</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 90</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&lt; 88</recovery_expression>
+                            <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 10% free</name>
+                            <priority>HIGH</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&gt; 80</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.lvmthin.used[{#PVENODELVMTHIN}].last(0)}/&#13;
+{Template pve api node:pveapi.node.lvmthin.size[{#PVENODELVMTHIN}].last(0)}))&#13;
+&lt; 75</recovery_expression>
+                            <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 20% free</name>
+                            <priority>WARNING</priority>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>LVMThin {#PVENODELVMTHIN} metadata usage</name>
@@ -2172,15 +2169,15 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi node discovery storage</name>
+                    <name>pveapi node discovery storage pools</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.discovery.storage</key>
+                    <key>pveapi.node.discovery.storagepool</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
-                            <name>storage {#PVENODESTORAGE} size</name>
+                            <name>storage pool {#PVENODESTORAGEPOOL} size</name>
                             <type>DEPENDENT</type>
-                            <key>pveapi.node.storage.size[{#PVENODESTORAGE}]</key>
+                            <key>pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}]</key>
                             <delay>0</delay>
                             <units>B</units>
                             <applications>
@@ -2195,38 +2192,13 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.node.master.storage</key>
+                                <key>pveapi.node.master.storagepools</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>storage {#PVENODESTORAGE} used percentage</name>
+                            <name>storage pool {#PVENODESTORAGEPOOL} used</name>
                             <type>DEPENDENT</type>
-                            <key>pveapi.node.storage.usedperc[{#PVENODESTORAGE}]</key>
-                            <delay>0</delay>
-                            <units>%</units>
-                            <applications>
-                                <application>
-                                    <name>PVE Node</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].used_fraction.first()</params>
-                                </step>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <params>100</params>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>pveapi.node.master.storage</key>
-                            </master_item>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>storage {#PVENODESTORAGE} used</name>
-                            <type>DEPENDENT</type>
-                            <key>pveapi.node.storage.used[{#PVENODESTORAGE}]</key>
+                            <key>pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}]</key>
                             <delay>0</delay>
                             <units>B</units>
                             <applications>
@@ -2241,18 +2213,56 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.node.master.storage</key>
+                                <key>pveapi.node.master.storagepools</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&gt; 98</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&lt; 95</recovery_expression>
+                            <name>{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 2% free</name>
+                            <priority>DISASTER</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&gt; 90</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&lt; 88</recovery_expression>
+                            <name>{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 10% free</name>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&gt; 80</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}].last(0)}))&#13;
+&lt; 75</recovery_expression>
+                            <name>{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 20% free</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>storage {#PVENODESTORAGE} usage</name>
+                            <name>storage {#PVENODESTORAGEPOOL} usage</name>
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>ITEM</ymax_type_1>
                             <ymax_item_1>
                                 <host>Template pve api node</host>
-                                <key>pveapi.node.storage.size[{#PVENODESTORAGE}]</key>
+                                <key>pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}]</key>
                             </ymax_item_1>
                             <graph_items>
                                 <graph_item>
@@ -2260,18 +2270,18 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                     <color>199C0D</color>
                                     <item>
                                         <host>Template pve api node</host>
-                                        <key>pveapi.node.storage.used[{#PVENODESTORAGE}]</key>
+                                        <key>pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
                     <master_item>
-                        <key>pveapi.node.master.storage</key>
+                        <key>pveapi.node.master.storagepools</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
-                            <lld_macro>{#PVENODESTORAGE}</lld_macro>
+                            <lld_macro>{#PVENODESTORAGEPOOL}</lld_macro>
                             <path>$.storage</path>
                         </lld_macro_path>
                     </lld_macro_paths>
@@ -2331,68 +2341,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>zpool {#PVENODEZFSPOOL} free %</name>
-                            <type>CALCULATED</type>
-                            <key>pveapi.node.zfs.freeperc[{#PVENODEZFSPOOL}]</key>
-                            <units>%</units>
-                            <params>100*(last(pveapi.node.zfs.size[{#PVENODEZFSPOOL}]) - last(pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}])) / last(pveapi.node.zfs.size[{#PVENODEZFSPOOL}]</params>
-                            <applications>
-                                <application>
-                                    <name>PVE Node</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.body.data.[?(@.name==&quot;{#PVENODEZFSPOOL}&quot;)].size.first()</params>
-                                </step>
-                            </preprocessing>
-                            <trigger_prototypes>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&lt;=2</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&gt;5</recovery_expression>
-                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 2% free</name>
-                                    <priority>DISASTER</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&lt;=10</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&gt;12</recovery_expression>
-                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 10% free</name>
-                                    <priority>HIGH</priority>
-                                </trigger_prototype>
-                                <trigger_prototype>
-                                    <expression>{last(0)}&lt;=20</expression>
-                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                                    <recovery_expression>{last(0)}&gt;25</recovery_expression>
-                                    <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 20% free</name>
-                                    <priority>WARNING</priority>
-                                </trigger_prototype>
-                            </trigger_prototypes>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>zpool {#PVENODEZFSPOOL} free</name>
-                            <type>DEPENDENT</type>
-                            <key>pveapi.node.zfs.free[{#PVENODEZFSPOOL}]</key>
-                            <delay>0</delay>
-                            <units>B</units>
-                            <applications>
-                                <application>
-                                    <name>PVE Node</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.body.data.[?(@.name==&quot;{#PVENODEZFSPOOL}&quot;)].free.first()</params>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>pveapi.node.master.zfs</key>
-                            </master_item>
-                        </item_prototype>
-                        <item_prototype>
                             <name>zpool {#PVENODEZFSPOOL} health</name>
                             <type>DEPENDENT</type>
                             <key>pveapi.node.zfs.health[{#PVENODEZFSPOOL}]</key>
@@ -2443,6 +2391,41 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&gt; 98</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&lt; 95</recovery_expression>
+                            <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 2% free</name>
+                            <priority>DISASTER</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&gt; 90</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&lt; 88</recovery_expression>
+                            <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 10% free</name>
+                            <priority>HIGH</priority>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&gt; 80</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>(100*({Template pve api node:pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}].last(0)}/&#13;
+{Template pve api node:pveapi.node.zfs.size[{#PVENODEZFSPOOL}].last(0)}))&#13;
+&lt; 75</recovery_expression>
+                            <name>{$PVENODE} zpool {#PVENODEZFSPOOL} less then 20% free</name>
+                            <priority>WARNING</priority>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>zpool {#PVENODEZFSPOOL} fragmentation</name>
@@ -2473,14 +2456,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                     <item>
                                         <host>Template pve api node</host>
                                         <key>pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}]</key>
-                                    </item>
-                                </graph_item>
-                                <graph_item>
-                                    <sortorder>1</sortorder>
-                                    <color>199C0D</color>
-                                    <item>
-                                        <host>Template pve api node</host>
-                                        <key>pveapi.node.zfs.free[{#PVENODEZFSPOOL}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -2542,7 +2517,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <resourcetype>20</resourcetype>
                             <style>0</style>
                             <resource>
-                                <name>lvm {#PVENODELVM} usage</name>
+                                <name>LVM {#PVENODELVM} used</name>
                                 <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
@@ -2797,7 +2772,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </screen_items>
                 </screen>
                 <screen>
-                    <name>Storage</name>
+                    <name>Storage pools</name>
                     <hsize>1</hsize>
                     <vsize>1</vsize>
                     <screen_items>
@@ -2805,7 +2780,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <resourcetype>20</resourcetype>
                             <style>0</style>
                             <resource>
-                                <name>storage {#PVENODESTORAGE} usage</name>
+                                <name>storage {#PVENODESTORAGEPOOL} usage</name>
                                 <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
