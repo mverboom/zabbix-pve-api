@@ -123,6 +123,7 @@ This list contains items that need to be created, modified or removed
 
 ## Modify/verify
 
+* [ ] Look at trigger dependancies for items with multiple level triggers
 * [ ] Graph color scheme
 * [ ] Graph number of CPU's in title
 * [ ] Snapshot monitoring regex full match
