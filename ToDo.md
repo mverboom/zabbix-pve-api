@@ -6,12 +6,15 @@ This list contains items that need to be created, modified or removed
 
 * Datacenter template
   * Monitoring
-    * [ ] Cluster nodes online
-    * [ ] Tasks
+    * [x] Cluster nodes online
+    * [x] Tasks
+    * [x] Node online
   * Graphs
-    * [ ] Cluster
+    * [x] Cluster
   * Triggers
-    * [ ] Tasks failed
+    * [x] API unreachable
+    * [x] Tasks failed
+    * [x] Node online
 * Node template
   * Monitoring
     * [x] CPU
@@ -26,9 +29,8 @@ This list contains items that need to be created, modified or removed
     * [x] SSD wearout
     * [x] Storage ZFS
     * [x] Storage LVM
-    * [ ] Storage ThinLVM
-    * [ ] Storage Directory
-    * [ ] Services
+    * [x] Storage ThinLVM
+    * [x] Services
     * [ ] Datastores
   * Graphs
     * [x] CPU
@@ -42,24 +44,26 @@ This list contains items that need to be created, modified or removed
     * [x] ZFS usage
     * [x] ZFS fragmentation
     * [x] Logical Volume usage
+    * [x] ThinLVM usage
     * [ ] Datastores
   * Triggers
     * [x] CPU
     * [x] Memory
     * [x] Swap
-    * [ ] Load average
     * [x] Root filesystem
     * [x] Smart status
     * [x] SSD wearout
     * [x] ZFS health
     * [x] ZFS free space
-    * [ ] Node services
+    * [x] Thin LVM free space
+    * [x] Node services
     * [ ] Datastores
   * Screens
     * [x] Overview
     * [x] Disks
     * [x] ZFS
-    * [ ] LVM
+    * [x] LVM
+    * [x] Thin LVM
 * Qemu template
   * Monitoring
     * [x] CPU
