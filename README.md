@@ -77,6 +77,27 @@ monitored becomes unavailable or dies, only the {$PVESERVER} macro needs to be
 changed to the name of another node in the cluster, and monitoring should
 continue.
 
+### Naming conventions
+
+There are some generic terms that are being used:
+
+* scope: {datacenter|node|qemu|lxc}
+* type: {master|discovery|<not present>}
+
+#### Template naming
+
+Template names have the following naming scheme:
+
+* Template pve api {scope}
+
+#### Item naming
+
+naming scheme items:
+
+* pveapi.<scope>.<type>.name
+
+where name is the item begin monitored, for example cpu.
+
 ### Template communcation
 
 The template set consists of 4 templates:
@@ -94,6 +115,7 @@ the cluster and uses Host Prototypes to create:
 
 Each of the created hosts have their own items and discovery rules to create and
 monitor the specific items for the host.
+
 
 ### VM migrations
 
