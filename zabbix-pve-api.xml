@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-06T17:58:33Z</date>
+    <date>2020-07-09T18:02:45Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -37,6 +37,46 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </applications>
             <items>
                 <item>
+                    <name>Cluster nodes</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.cluster.nodes</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>PVE Datacenter</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data[?(@.type == &quot;node&quot;)].length()</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pveapi.master.cluster</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Cluster nodes online</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.cluster.nodesonline</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>PVE Datacenter</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data[?(@.type == &quot;node&quot; &amp;&amp; @.status == &quot;online&quot;)].length()</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pveapi.master.cluster</key>
+                    </master_item>
+                </item>
+                <item>
                     <name>pveapi master cluster</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.master.cluster</key>
@@ -56,6 +96,49 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </header>
                     </headers>
                     <output_format>JSON</output_format>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(2m)}=1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(2m)}=0</recovery_expression>
+                            <name>{$PVESERVER} Proxmox API unreachable</name>
+                            <status>DISABLED</status>
+                            <priority>DISASTER</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>pveapi master cluster tasks failed</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.master.cluster.tasks</key>
+                    <applications>
+                        <application>
+                            <name>PVE Datacenter</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data[?(@.status != &quot;OK&quot;)].id.length()</params>
+                        </step>
+                    </preprocessing>
+                    <url>https://{$PVESERVER}:8006/api2/json/cluster/tasks</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(#1)} &gt; {last(#2)}</expression>
+                            <recovery_mode>NONE</recovery_mode>
+                            <name>{$PVESERVER} tasks failed</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
             </items>
             <discovery_rules>
@@ -138,6 +221,35 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery</key>
                     <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Node {#PVENODE} online</name>
+                            <type>DEPENDENT</type>
+                            <key>pxeapi.cluster.node.online[{#PVENODE}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>PVE Datacenter</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data[?(@.node== &quot;{#PVENODE}&quot; &amp;&amp; @.status == &quot;online&quot;)].status.length()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.master.cluster</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}=0</expression>
+                                    <name>Node {#PVENODE} offline</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
                     <host_prototypes>
                         <host_prototype>
                             <host>node {#PVENODE}</host>
@@ -270,6 +382,37 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <description>Systems in this pool will not generate triggers</description>
                 </macro>
             </macros>
+            <screens>
+                <screen>
+                    <name>Cluster status</name>
+                    <hsize>2</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Cluster status</name>
+                                <host>Template pve api datacenter</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
         </template>
         <template>
             <template>Template pve api lxc</template>
@@ -1165,7 +1308,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </master_item>
                 </item>
                 <item>
-                    <name>pveapi master node</name>
+                    <name>pveapi node master status</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master</key>
                     <trends>0</trends>
@@ -1185,7 +1328,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
-                    <name>pveapi master node disks</name>
+                    <name>pveapi node master disks</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.disks</key>
                     <delay>1h</delay>
@@ -1207,7 +1350,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
-                    <name>pveapi master node lvm</name>
+                    <name>pveapi node master lvm</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.lvm</key>
                     <trends>0</trends>
@@ -1227,7 +1370,27 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
-                    <name>pveapi master node services</name>
+                    <name>pveapi node master lvmthin</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.node.master.lvmthin</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/lvmthin</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                </item>
+                <item>
+                    <name>pveapi node master services</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.services</key>
                     <trends>0</trends>
@@ -1247,7 +1410,29 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
-                    <name>pveapi master node zfs</name>
+                    <name>pveapi node master storage</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.node.master.storage</key>
+                    <delay>1h</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Node</name>
+                        </application>
+                    </applications>
+                    <timeout>10s</timeout>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/storage</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                </item>
+                <item>
+                    <name>pveapi node master zfs</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.zfs</key>
                     <trends>0</trends>
@@ -1286,44 +1471,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <master_item>
                         <key>pveapi.node.master</key>
                     </master_item>
-                </item>
-                <item>
-                    <name>Memory free percent</name>
-                    <type>CALCULATED</type>
-                    <key>pveapi.node.mem.freeperc</key>
-                    <units>%</units>
-                    <params>100*(last(pveapi.node.mem.free) / last(pveapi.node.mem.size))</params>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.swap.free</params>
-                        </step>
-                    </preprocessing>
-                    <triggers>
-                        <trigger>
-                            <expression>{avg(10m)}&lt;5</expression>
-                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{avg(10m)}&gt;10</recovery_expression>
-                            <name>Memory less than 5% free on {$PVENODE}</name>
-                            <priority>WARNING</priority>
-                            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
-                            <manual_close>YES</manual_close>
-                        </trigger>
-                        <trigger>
-                            <expression>{avg(10m)}&lt;50</expression>
-                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{avg(10m)}&gt;60</recovery_expression>
-                            <name>Swap more than 50% used on {$PVENODE}</name>
-                            <priority>WARNING</priority>
-                            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
-                            <manual_close>YES</manual_close>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>Memory size</name>
@@ -1409,35 +1556,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <master_item>
                         <key>pveapi.node.master</key>
                     </master_item>
-                </item>
-                <item>
-                    <name>Rootfs free percent</name>
-                    <type>CALCULATED</type>
-                    <key>pveapi.node.rootfs.freeperc</key>
-                    <units>%</units>
-                    <params>100*(last(pveapi.node.rootfs.avail) / last(pveapi.node.rootfs.size))</params>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.swap.free</params>
-                        </step>
-                    </preprocessing>
-                    <triggers>
-                        <trigger>
-                            <expression>{avg(10m)}&lt;10</expression>
-                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{avg(10m)}&gt;1510</recovery_expression>
-                            <name>RootFS has less than 10% free on {$PVENODE}</name>
-                            <priority>WARNING</priority>
-                            <description>{$PVENODE} has less then 10% diskspace free over the last 10 minutes</description>
-                            <manual_close>YES</manual_close>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>Root filesystem size</name>
@@ -1564,14 +1682,24 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <master_item>
                         <key>pveapi.node.master</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{change(0)}&lt;0</expression>
+                            <name>{$PVENODE} is restarted</name>
+                            <priority>INFO</priority>
+                            <description>{$PVENODE} restarted</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
             </items>
             <discovery_rules>
                 <discovery_rule>
-                    <name>pveapi node disks discovery</name>
+                    <name>pveapi node discovery disks</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.disks.discovery</key>
+                    <key>pveapi.node.discovery.disks</key>
                     <delay>0</delay>
+                    <status>DISABLED</status>
                     <item_prototypes>
                         <item_prototype>
                             <name>Disk {#PVENODEDISK} health</name>
@@ -1596,7 +1724,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             </master_item>
                             <trigger_prototypes>
                                 <trigger_prototype>
-                                    <expression>{regexp(PASSED)}=0</expression>
+                                    <expression>{regexp(PASSED|OK)}=0</expression>
                                     <name>{$PVENODE} disk {#PVENODEDISK} health failed</name>
                                     <priority>DISASTER</priority>
                                     <manual_close>YES</manual_close>
@@ -1677,9 +1805,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi node lvm discovery</name>
+                    <name>pveapi node discovery lvm</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.lvm.discovery</key>
+                    <key>pveapi.node.discovery.lvm</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
@@ -1775,9 +1903,226 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi node services discovery</name>
+                    <name>pveapi node discovery lvmthin</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.services.discovery</key>
+                    <key>pveapi.node.discovery.lvmthin</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} metadata size</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.lv==&quot;{#PVENODELVMTHIN}&quot;)].metadata_size.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvmthin</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} metadata used percentage</name>
+                            <type>CALCULATED</type>
+                            <key>pveapi.node.lvmthin.metadatausedperc[{#PVENODELVMTHIN}]</key>
+                            <units>%</units>
+                            <params>100 * (last(pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}]) / last(pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}]) )</params>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;98</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;954</recovery_expression>
+                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 2% free</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;90</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;88</recovery_expression>
+                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 10% free</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;80</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;75</recovery_expression>
+                                    <name>{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 20% free</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} metadata used</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.lv==&quot;{#PVENODELVMTHIN}&quot;)].metadata_used.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvmthin</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} size</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvmthin.size[{#PVENODELVMTHIN}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.lv==&quot;{#PVENODELVMTHIN}&quot;)].lv_size.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvmthin</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} used percentage</name>
+                            <type>CALCULATED</type>
+                            <key>pveapi.node.lvmthin.usedperc[{#PVENODELVMTHIN}]</key>
+                            <units>%</units>
+                            <params>100 * (last(pveapi.node.lvmthin.used[{#PVENODELVMTHIN}]) / last(pveapi.node.lvmthin.size[{#PVENODELVMTHIN}]) )</params>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;98</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;954</recovery_expression>
+                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 2% free</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;90</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;88</recovery_expression>
+                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 10% free</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last(0)}&gt;80</expression>
+                                    <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                                    <recovery_expression>{last(0)}&lt;75</recovery_expression>
+                                    <name>{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 20% free</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} used</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.lvmthin.used[{#PVENODELVMTHIN}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.lv==&quot;{#PVENODELVMTHIN}&quot;)].used.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.lvmthin</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} metadata usage</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>ITEM</ymax_type_1>
+                            <ymax_item_1>
+                                <host>Template pve api node</host>
+                                <key>pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}]</key>
+                            </ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>FILLED_REGION</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template pve api node</host>
+                                        <key>pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>LVMThin {#PVENODELVMTHIN} usage</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>ITEM</ymax_type_1>
+                            <ymax_item_1>
+                                <host>Template pve api node</host>
+                                <key>pveapi.node.lvmthin.size[{#PVENODELVMTHIN}]</key>
+                            </ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>FILLED_REGION</drawtype>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template pve api node</host>
+                                        <key>pveapi.node.lvmthin.used[{#PVENODELVMTHIN}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>pveapi.node.master.lvmthin</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODELVMTHIN}</lld_macro>
+                            <path>$.lv</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>pveapi node discovery services</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.node.discovery.services</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
@@ -1827,9 +2172,120 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi node zfs discovery</name>
+                    <name>pveapi node discovery storage</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.zfs.discovery</key>
+                    <key>pveapi.node.discovery.storage</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>storage {#PVENODESTORAGE} size</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.storage.size[{#PVENODESTORAGE}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].total.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.storage</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>storage {#PVENODESTORAGE} used percentage</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.storage.usedperc[{#PVENODESTORAGE}]</key>
+                            <delay>0</delay>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].used_fraction.first()</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>100</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.storage</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>storage {#PVENODESTORAGE} used</name>
+                            <type>DEPENDENT</type>
+                            <key>pveapi.node.storage.used[{#PVENODESTORAGE}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>PVE Node</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].used.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pveapi.node.master.storage</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>storage {#PVENODESTORAGE} usage</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>ITEM</ymax_type_1>
+                            <ymax_item_1>
+                                <host>Template pve api node</host>
+                                <key>pveapi.node.storage.size[{#PVENODESTORAGE}]</key>
+                            </ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>FILLED_REGION</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template pve api node</host>
+                                        <key>pveapi.node.storage.used[{#PVENODESTORAGE}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>pveapi.node.master.storage</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODESTORAGE}</lld_macro>
+                            <path>$.storage</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.data</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>pveapi node discovery zfs</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.node.discovery.zfs</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
@@ -2078,6 +2534,86 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </screen_items>
                 </screen>
                 <screen>
+                    <name>LVM storage</name>
+                    <hsize>1</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>lvm {#PVENODELVM} usage</name>
+                                <host>Template pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+                <screen>
+                    <name>LVMThin storage</name>
+                    <hsize>2</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>LVMThin {#PVENODELVMTHIN} usage</name>
+                                <host>Template pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>LVMThin {#PVENODELVMTHIN} metadata usage</name>
+                                <host>Template pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+                <screen>
                     <name>Overview</name>
                     <hsize>2</hsize>
                     <vsize>4</vsize>
@@ -2247,6 +2783,35 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <height>100</height>
                             <x>1</x>
                             <y>3</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+                <screen>
+                    <name>Storage</name>
+                    <hsize>1</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>storage {#PVENODESTORAGE} usage</name>
+                                <host>Template pve api node</host>
+                            </resource>
+                            <width>500</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
                             <colspan>1</colspan>
                             <rowspan>1</rowspan>
                             <elements>0</elements>
@@ -2597,6 +3162,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.blockstat.{#PVEQEMUBLOCKDEV}.rd_operations</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>CHANGE_PER_SECOND</type>
@@ -2612,6 +3178,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <type>DEPENDENT</type>
                             <key>pveapi.qemu.blockdev.read[{#PVEQEMUBLOCKDEV}]</key>
                             <delay>0</delay>
+                            <value_type>FLOAT</value_type>
                             <units>Bps</units>
                             <applications>
                                 <application>
@@ -2622,6 +3189,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.blockstat.{#PVEQEMUBLOCKDEV}.rd_bytes</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>CHANGE_PER_SECOND</type>
@@ -2647,6 +3215,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.blockstat.{#PVEQEMUBLOCKDEV}.wr_operations</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>CHANGE_PER_SECOND</type>
@@ -2672,6 +3241,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.blockstat.{#PVEQEMUBLOCKDEV}.wr_bytes</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>CHANGE_PER_SECOND</type>
@@ -2758,6 +3328,11 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                             <params>]
 }]</params>
                         </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <params>blockdev&quot;:}
+blockdev&quot;:&quot;&quot;}</params>
+                        </step>
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
@@ -2783,6 +3358,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.nics.{#PVEQEMUNIC}.netin</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>MULTIPLIER</type>
@@ -2812,6 +3388,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data.nics.{#PVEQEMUNIC}.netout</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                                 <step>
                                     <type>MULTIPLIER</type>
@@ -2863,8 +3440,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data.nics[*]~</params>
-                            <error_handler>CUSTOM_VALUE</error_handler>
-                            <error_handler_params>{ &quot;data&quot;:[] }</error_handler_params>
+                            <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                         <step>
                             <type>STR_REPLACE</type>
@@ -2907,8 +3483,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data[?(@.name==&quot;{#PVEQEMUSNAPSHOT}&quot; &amp;&amp; ! (@.name =~ &quot;^{$PVESNAPSHOTEXCLUDE}&quot;))].length()</params>
-                                    <error_handler>CUSTOM_VALUE</error_handler>
-                                    <error_handler_params>0</error_handler_params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -2932,6 +3507,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.body.data[?(@.name==&quot;{#PVEQEMUSNAPSHOT}&quot;)].snaptime.first()</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -2961,8 +3537,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data[?(@.name!=&quot;current&quot;)]</params>
-                            <error_handler>CUSTOM_VALUE</error_handler>
-                            <error_handler_params>{ &quot;data&quot;:[] }</error_handler_params>
+                            <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -3198,12 +3773,39 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
+            <expression>(100*({Template pve api node:pveapi.node.mem.free.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &lt; 5</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>(100*({Template pve api node:pveapi.node.mem.free.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &gt;10</recovery_expression>
+            <name>Memory less than 5% free on {$PVENODE}</name>
+            <priority>WARNING</priority>
+            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
             <expression>{Template pve api qemu:pveapi.qemu.memfree.avg(10m)}&lt;5 and {Template pve api qemu:pveapi.qemu.poolcheck.last()}=1</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
             <recovery_expression>{Template pve api qemu:pveapi.qemu.memfree.avg(10m)}&gt;10</recovery_expression>
             <name>Memory less than 5% free on {$PVEQEMUNAME}</name>
             <priority>WARNING</priority>
             <description>{$PVEQEMUNAME} has less then 5% memory free over the last 10 minutes.</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>(100* ({Template pve api node:pveapi.node.rootfs.used.avg(10m)} / {Template pve api node:pveapi.node.rootfs.total.avg(10m)})) &gt; 90</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>(100* ({Template pve api node:pveapi.node.rootfs.used.avg(10m)} / {Template pve api node:pveapi.node.rootfs.total.avg(10m)})) &lt; 80</recovery_expression>
+            <name>RootFS has less than 10% free on {$PVENODE}</name>
+            <priority>WARNING</priority>
+            <description>{$PVENODE} has less then 10% diskspace free over the last 10 minutes</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>(100*({Template pve api node:pveapi.node.swap.used.avg(10m)}/{Template pve api node:pveapi.node.swap.total.avg(10m)})) &gt; 50</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>(100*({Template pve api node:pveapi.node.swap.used.avg(10m)}/{Template pve api node:pveapi.node.swap.total.avg(10m)})) &lt; 40</recovery_expression>
+            <name>Swap more than 50% used on {$PVENODE}</name>
+            <priority>WARNING</priority>
+            <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
@@ -3218,15 +3820,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <name>{$PVELXCNAME} is stopped</name>
             <priority>WARNING</priority>
             <description>{$PVELXCNAME} is stopped.</description>
-            <manual_close>YES</manual_close>
-        </trigger>
-        <trigger>
-            <expression>{Template pve api node:pveapi.node.uptime.change(0)}&lt;0</expression>
-            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{Template pve api node:pveapi.node.cpu.idle.avg(15m)}&gt;30</recovery_expression>
-            <name>{$PVENODE} is restarted</name>
-            <priority>INFO</priority>
-            <description>{$PVENODE} restarted</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
@@ -3245,6 +3838,25 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
         </trigger>
     </triggers>
     <graphs>
+        <graph>
+            <name>Cluster status</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <ymax_type_1>ITEM</ymax_type_1>
+            <ymax_item_1>
+                <host>Template pve api datacenter</host>
+                <key>pveapi.cluster.nodes</key>
+            </ymax_item_1>
+            <graph_items>
+                <graph_item>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template pve api datacenter</host>
+                        <key>pveapi.cluster.nodesonline</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
         <graph>
             <name>CPU</name>
             <ymin_type_1>FIXED</ymin_type_1>
