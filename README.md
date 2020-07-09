@@ -61,7 +61,23 @@ one downside, this API Token needs to be submitted through an HTTP header. The
 simplest way to do an HTTP request is through the Zabbix Agent. This method does
 not allow for sending headers. The alternative is the HTTP Request method.
 
-The HTTP Request method
+### Connecting to API
+
+The HTTP Request method does not require a Zabbix Agent to be active on the system.
+It is possible to define a host within Zabbix that has an interface (for example
+a zabbix agent to 127.0.0.1) but doesn't use it and has the Template pve api
+datacenter applied.
+
+In order to decouple the monitoring further from the host configuration, the
+name of the host within Zabbix is not used by the templates to connect to the
+API. The hostname is determined by the {$PVESERVER} macro. This is intentional.
+This way it is possible for a cluster to define a "dummy" host within zabbix with
+the name of the Proxmox cluster. If the node through which the whole cluster is
+monitored becomes unavailable or dies, only the {$PVESERVER} macro needs to be
+changed to the name of another node in the cluster, and monitoring should
+continue.
+
+### Template communcation
 
 The template set consists of 4 templates:
 
@@ -70,7 +86,20 @@ The template set consists of 4 templates:
   * Template pve api lxc
   * Template pve api qemu
 
-The pve api datacenter template
+The pve api datacenter template is the main entry point. This template discovers
+the cluster and uses Host Prototypes to create:
+* nodes
+* lxc containers
+* qemu virtual machines
+
+Each of the created hosts have their own items and discovery rules to create and
+monitor the specific items for the host.
+
+### VM migrations
+
+Because the VM's are not hierarchically linked to the node they run on, data will
+
+
 
 ## Configuration
 
@@ -79,6 +108,12 @@ There are two steps in configuring the usage of this template set:
 1. Creating an API token in Proxmox
 2. Configuring the template
 3. Optional configuration
+
+A word of warning. There are quite a lot of items that will be monitored when this
+template is applied to one or more Proxmox clusters or stand alone systems. There
+might be items that are less applicable in certain situations. It can save load on
+the Zabbix server to look through the templates and disable specific monitoring of
+items if they are not required.
 
 ### Creating API token
 
