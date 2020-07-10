@@ -31,7 +31,7 @@ This list contains items that need to be created, modified or removed
     * [x] Storage LVM
     * [x] Storage ThinLVM
     * [x] Services
-    * [ ] Datastores
+    * [x] Datastores
   * Graphs
     * [x] CPU
     * [x] Memory
@@ -45,7 +45,7 @@ This list contains items that need to be created, modified or removed
     * [x] ZFS fragmentation
     * [x] Logical Volume usage
     * [x] ThinLVM usage
-    * [ ] Datastores
+    * [x] Datastores
   * Triggers
     * [x] CPU
     * [x] Memory
@@ -57,7 +57,7 @@ This list contains items that need to be created, modified or removed
     * [x] ZFS free space
     * [x] Thin LVM free space
     * [x] Node services
-    * [ ] Datastores
+    * [x] Datastores
   * Screens
     * [x] Overview
     * [x] Disks
@@ -110,7 +110,7 @@ This list contains items that need to be created, modified or removed
     * [x] Disk space
     * [x] Run status
     * [x] Snapshot age
-    * [ ] Locked system
+    * [x] Locked system
   * Screens
     * [x] Overview
 * Documentation
@@ -123,6 +123,7 @@ This list contains items that need to be created, modified or removed
 
 ## Modify/verify
 
+* [ ] Look at user macro context for specific trigger values (https://www.zabbix.com/documentation/4.0/manual/config/macros/usermacros#user_macro_context)
 * [ ] Look at trigger dependancies for items with multiple level triggers
 * [ ] Graph color scheme
 * [ ] Graph number of CPU's in title
