@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-07-09T18:40:08Z</date>
+    <date>2020-07-10T16:09:46Z</date>
     <groups>
         <group>
             <name>PVE</name>
@@ -25,6 +25,11 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
 {$PVESERVER} : Server to talk to for the API&#13;
 {$PVETOKENID} : API token ID&#13;
 {$PVESECRET} : API secret</description>
+            <templates>
+                <template>
+                    <name>Template pve api settings</name>
+                </template>
+            </templates>
             <groups>
                 <group>
                     <name>PVE</name>
@@ -39,7 +44,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                 <item>
                     <name>Cluster nodes</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.cluster.nodes</key>
+                    <key>pveapi.datacenter.clusternodes</key>
                     <delay>0</delay>
                     <applications>
                         <application>
@@ -53,13 +58,13 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.cluster</key>
+                        <key>pveapi.datacenter.master.resources</key>
                     </master_item>
                 </item>
                 <item>
                     <name>Cluster nodes online</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.cluster.nodesonline</key>
+                    <key>pveapi.datacenter.clusternodesonline</key>
                     <delay>0</delay>
                     <applications>
                         <application>
@@ -73,13 +78,13 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.cluster</key>
+                        <key>pveapi.datacenter.master.resources</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>pveapi master cluster</name>
+                    <name>pveapi datacenter master resources</name>
                     <type>HTTP_AGENT</type>
-                    <key>pveapi.master.cluster</key>
+                    <key>pveapi.datacenter.master.resources</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <description>Item specifically does not use cluster/config/nodes as that has no information for single node systems.</description>
@@ -108,9 +113,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </triggers>
                 </item>
                 <item>
-                    <name>pveapi master cluster tasks failed</name>
+                    <name>pveapi datacenter master tasks</name>
                     <type>HTTP_AGENT</type>
-                    <key>pveapi.master.cluster.tasks</key>
+                    <key>pveapi.datacenter.master.tasks</key>
                     <applications>
                         <application>
                             <name>PVE Datacenter</name>
@@ -143,9 +148,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             </items>
             <discovery_rules>
                 <discovery_rule>
-                    <name>pveapi lxc discovery</name>
+                    <name>pveapi datacenter discovery lxc</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.lxc.discovery</key>
+                    <key>pveapi.datacenter.discovery.lxc</key>
                     <delay>0</delay>
                     <host_prototypes>
                         <host_prototype>
@@ -189,7 +194,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </host_prototype>
                     </host_prototypes>
                     <master_item>
-                        <key>pveapi.master.cluster</key>
+                        <key>pveapi.datacenter.master.resources</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -217,15 +222,15 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi node discovery</name>
+                    <name>pveapi datacenter discovery node</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.node.discovery</key>
+                    <key>pveapi.datacenter.discovery.node</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
                             <name>Node {#PVENODE} online</name>
                             <type>DEPENDENT</type>
-                            <key>pxeapi.cluster.node.online[{#PVENODE}]</key>
+                            <key>pxeapi.datacenter.node.online[{#PVENODE}]</key>
                             <delay>0</delay>
                             <applications>
                                 <application>
@@ -239,7 +244,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.cluster</key>
+                                <key>pveapi.datacenter.master.resources</key>
                             </master_item>
                             <trigger_prototypes>
                                 <trigger_prototype>
@@ -275,7 +280,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </host_prototype>
                     </host_prototypes>
                     <master_item>
-                        <key>pveapi.master.cluster</key>
+                        <key>pveapi.datacenter.master.resources</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -291,9 +296,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi qemu discovery</name>
+                    <name>pveapi datacenter discovery qemu</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.qemu.discovery</key>
+                    <key>pveapi.datacenter.discovery.qemu</key>
                     <delay>0</delay>
                     <host_prototypes>
                         <host_prototype>
@@ -337,7 +342,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </host_prototype>
                     </host_prototypes>
                     <master_item>
-                        <key>pveapi.master.cluster</key>
+                        <key>pveapi.datacenter.master.resources</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -365,23 +370,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </preprocessing>
                 </discovery_rule>
             </discovery_rules>
-            <macros>
-                <macro>
-                    <macro>{$PVESNAPSHOTAGE}</macro>
-                    <value>604800</value>
-                    <description>Alert if snapshots older than 1 week (default)</description>
-                </macro>
-                <macro>
-                    <macro>{$PVESNAPSHOTEXCLUDE}</macro>
-                    <value>test</value>
-                    <description>Ignore snapshots starting with this text</description>
-                </macro>
-                <macro>
-                    <macro>{$PVETESTPOOL}</macro>
-                    <value>test</value>
-                    <description>Systems in this pool will not generate triggers</description>
-                </macro>
-            </macros>
             <screens>
                 <screen>
                     <name>Cluster status</name>
@@ -418,6 +406,11 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             <template>Template pve api lxc</template>
             <name>Template pve api lxc</name>
             <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
+            <templates>
+                <template>
+                    <name>Template pve api settings</name>
+                </template>
+            </templates>
             <groups>
                 <group>
                     <name>PVE LXC</name>
@@ -452,7 +445,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -472,7 +465,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -493,7 +486,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -530,7 +523,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -555,7 +548,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -577,8 +570,50 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>pveapi lxc master snapshot</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.lxc.master.snapshot</key>
+                    <delay>5m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE LXC</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/snapshot</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                    <allow_traps>YES</allow_traps>
+                </item>
+                <item>
+                    <name>pveapi lxc master status</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.lxc.master.status</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE LXC</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/status/current</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
                 </item>
                 <item>
                     <name>Disk size</name>
@@ -598,7 +633,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -619,7 +654,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -640,7 +675,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -661,7 +696,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -702,7 +737,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -731,7 +766,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -792,7 +827,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -813,7 +848,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -834,55 +869,13 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.lxc</key>
+                        <key>pveapi.lxc.master.status</key>
                     </master_item>
-                </item>
-                <item>
-                    <name>pveapi master lxc</name>
-                    <type>HTTP_AGENT</type>
-                    <key>pveapi.master.lxc</key>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>PVE LXC</name>
-                        </application>
-                    </applications>
-                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/status/current</url>
-                    <headers>
-                        <header>
-                            <name>Authorization</name>
-                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
-                        </header>
-                    </headers>
-                    <output_format>JSON</output_format>
-                </item>
-                <item>
-                    <name>pveapi master lxc snapshot</name>
-                    <type>HTTP_AGENT</type>
-                    <key>pveapi.master.lxc.snapshot</key>
-                    <delay>5m</delay>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>PVE LXC</name>
-                        </application>
-                    </applications>
-                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/snapshot</url>
-                    <headers>
-                        <header>
-                            <name>Authorization</name>
-                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
-                        </header>
-                    </headers>
-                    <output_format>JSON</output_format>
-                    <allow_traps>YES</allow_traps>
                 </item>
             </items>
             <discovery_rules>
                 <discovery_rule>
-                    <name>pveapi lxc snapshot discovery</name>
+                    <name>pveapi lxc discovery snapshot</name>
                     <type>DEPENDENT</type>
                     <key>pveapi.lxc.snapshot.discovery</key>
                     <delay>0</delay>
@@ -910,7 +903,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.lxc.snapshot</key>
+                                <key>pveapi.lxc.master.snapshot</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -933,7 +926,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.lxc.snapshot</key>
+                                <key>pveapi.lxc.master.snapshot</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -947,7 +940,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </trigger_prototype>
                     </trigger_prototypes>
                     <master_item>
-                        <key>pveapi.master.lxc.snapshot</key>
+                        <key>pveapi.lxc.master.snapshot</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -1133,6 +1126,11 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             <template>Template pve api node</template>
             <name>Template pve api node</name>
             <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
+            <templates>
+                <template>
+                    <name>Template pve api settings</name>
+                </template>
+            </templates>
             <groups>
                 <group>
                     <name>PVE</name>
@@ -1144,32 +1142,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                 </application>
             </applications>
             <items>
-                <item>
-                    <name>CPU idle</name>
-                    <type>DEPENDENT</type>
-                    <key>pveapi.node.cpu.idle</key>
-                    <delay>0</delay>
-                    <value_type>FLOAT</value_type>
-                    <units>%</units>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.idle</params>
-                        </step>
-                        <step>
-                            <type>MULTIPLIER</type>
-                            <params>100</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>pveapi.node.master</key>
-                    </master_item>
-                </item>
                 <item>
                     <name>CPU user</name>
                     <type>DEPENDENT</type>
@@ -1410,10 +1382,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                 </item>
                 <item>
-                    <name>pveapi node master storage</name>
+                    <name>pveapi node master storagepools</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.node.master.storagepools</key>
-                    <delay>1h</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <applications>
@@ -1450,27 +1421,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </header>
                     </headers>
                     <output_format>JSON</output_format>
-                </item>
-                <item>
-                    <name>Memory free</name>
-                    <type>DEPENDENT</type>
-                    <key>pveapi.node.mem.free</key>
-                    <delay>0</delay>
-                    <units>B</units>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.memory.free</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>pveapi.node.master</key>
-                    </master_item>
                 </item>
                 <item>
                     <name>Memory size</name>
@@ -1537,27 +1487,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </master_item>
                 </item>
                 <item>
-                    <name>Root filesystem free</name>
-                    <type>DEPENDENT</type>
-                    <key>pveapi.node.rootfs.avail</key>
-                    <delay>0</delay>
-                    <units>B</units>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.rootfs.avail</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>pveapi.node.master</key>
-                    </master_item>
-                </item>
-                <item>
                     <name>Root filesystem size</name>
                     <type>DEPENDENT</type>
                     <key>pveapi.node.rootfs.total</key>
@@ -1593,27 +1522,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <step>
                             <type>JSONPATH</type>
                             <params>$.body.data.rootfs.used</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>pveapi.node.master</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>Swap free</name>
-                    <type>DEPENDENT</type>
-                    <key>pveapi.node.swap.free</key>
-                    <delay>0</delay>
-                    <units>B</units>
-                    <applications>
-                        <application>
-                            <name>PVE Node</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <params>$.body.data.swap.free</params>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -1750,7 +1658,8 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                                 <step>
                                     <type>NOT_MATCHES_REGEX</type>
                                     <params>N/A</params>
-                                    <error_handler>DISCARD_VALUE</error_handler>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -1779,6 +1688,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <ymax_type_1>FIXED</ymax_type_1>
                             <graph_items>
                                 <graph_item>
+                                    <drawtype>FILLED_REGION</drawtype>
                                     <color>199C0D</color>
                                     <item>
                                         <host>Template pve api node</host>
@@ -2188,7 +2098,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].total.first()</params>
+                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGEPOOL}&quot;)].total.first()</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -2209,7 +2119,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGE}&quot;)].used.first()</params>
+                                    <params>$.body.data.[?(@.storage==&quot;{#PVENODESTORAGEPOOL}&quot;)].used.first()</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -2257,7 +2167,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>storage {#PVENODESTORAGEPOOL} usage</name>
+                            <name>storage pool {#PVENODESTORAGEPOOL} usage ({#PVENODESTORAGEPOOLTYPE})</name>
                             <ymin_type_1>FIXED</ymin_type_1>
                             <ymax_type_1>ITEM</ymax_type_1>
                             <ymax_item_1>
@@ -2280,6 +2190,10 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         <key>pveapi.node.master.storagepools</key>
                     </master_item>
                     <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODESTORAGEPOOLTYPE}</lld_macro>
+                            <path>$.type</path>
+                        </lld_macro_path>
                         <lld_macro_path>
                             <lld_macro>{#PVENODESTORAGEPOOL}</lld_macro>
                             <path>$.storage</path>
@@ -2780,7 +2694,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <resourcetype>20</resourcetype>
                             <style>0</style>
                             <resource>
-                                <name>storage {#PVENODESTORAGEPOOL} usage</name>
+                                <name>storage pool {#PVENODESTORAGEPOOL} usage ({#PVENODESTORAGEPOOLTYPE})</name>
                                 <host>Template pve api node</host>
                             </resource>
                             <width>500</width>
@@ -2857,6 +2771,11 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
             <template>Template pve api qemu</template>
             <name>Template pve api qemu</name>
             <description>This template is used by Template pve api datacenter. Please don't use directly.</description>
+            <templates>
+                <template>
+                    <name>Template pve api settings</name>
+                </template>
+            </templates>
             <groups>
                 <group>
                     <name>PVE Qemu</name>
@@ -2868,47 +2787,6 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                 </application>
             </applications>
             <items>
-                <item>
-                    <name>pveapi master qemu</name>
-                    <type>HTTP_AGENT</type>
-                    <key>pveapi.master.qemu</key>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>PVE Qemu</name>
-                        </application>
-                    </applications>
-                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/status/current</url>
-                    <headers>
-                        <header>
-                            <name>Authorization</name>
-                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
-                        </header>
-                    </headers>
-                    <output_format>JSON</output_format>
-                </item>
-                <item>
-                    <name>pveapi master qemu snapshot</name>
-                    <type>HTTP_AGENT</type>
-                    <key>pveapi.master.qemu.snapshot</key>
-                    <delay>5m</delay>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>PVE Qemu</name>
-                        </application>
-                    </applications>
-                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/snapshot</url>
-                    <headers>
-                        <header>
-                            <name>Authorization</name>
-                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
-                        </header>
-                    </headers>
-                    <output_format>JSON</output_format>
-                </item>
                 <item>
                     <name>CPU</name>
                     <type>DEPENDENT</type>
@@ -2932,7 +2810,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -2952,8 +2830,49 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>pveapi qemu master snapshot</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.qemu.master.snapshot</key>
+                    <delay>5m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Qemu</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/snapshot</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
+                </item>
+                <item>
+                    <name>pveapi qemu master status</name>
+                    <type>HTTP_AGENT</type>
+                    <key>pveapi.qemu.master.status</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>PVE Qemu</name>
+                        </application>
+                    </applications>
+                    <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/status/current</url>
+                    <headers>
+                        <header>
+                            <name>Authorization</name>
+                            <value>PVEAPIToken={$PVETOKENID}={$PVESECRET}</value>
+                        </header>
+                    </headers>
+                    <output_format>JSON</output_format>
                 </item>
                 <item>
                     <name>Disk size</name>
@@ -2973,7 +2892,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -2994,7 +2913,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -3015,7 +2934,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -3088,7 +3007,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
                 <item>
@@ -3109,15 +3028,15 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                 </item>
             </items>
             <discovery_rules>
                 <discovery_rule>
-                    <name>pveapi qemu blockdevice discovery</name>
+                    <name>pveapi qemu discovery blockdevice</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.qemu.blockdev.discovery</key>
+                    <key>pveapi.qemu.discovery.blockdev</key>
                     <delay>0</delay>
                     <description>Discover blockdevices for qemu.&#13;
 The preprocessing is pretty gross. Need to modify an array to items with names.</description>
@@ -3145,7 +3064,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3172,7 +3091,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3198,7 +3117,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3224,7 +3143,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -3273,7 +3192,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         </graph_prototype>
                     </graph_prototypes>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -3311,9 +3230,9 @@ blockdev&quot;:&quot;&quot;}</params>
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi qemu nic discovery</name>
+                    <name>pveapi qemu discovery nic</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.qemu.nic.discovery</key>
+                    <key>pveapi.qemu.discovery.nic</key>
                     <delay>0</delay>
                     <description>Discover network interfaces for qemu.&#13;
 The preprocessing is pretty gross. Need to modify an array to items with names.</description>
@@ -3321,7 +3240,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <item_prototype>
                             <name>{#PVEQEMUNIC} in</name>
                             <type>DEPENDENT</type>
-                            <key>pveapi.qemu.nicin[{#PVEQEMUNIC}]</key>
+                            <key>pveapi.qemu.nic.in[{#PVEQEMUNIC}]</key>
                             <delay>0</delay>
                             <units>bps</units>
                             <applications>
@@ -3345,13 +3264,13 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>{#PVEQEMUNIC} out</name>
                             <type>DEPENDENT</type>
-                            <key>pveapi.qemu.nicout[{#PVEQEMUNIC}]</key>
+                            <key>pveapi.qemu.nic.out[{#PVEQEMUNIC}]</key>
                             <delay>0</delay>
                             <units>bps</units>
                             <applications>
@@ -3375,7 +3294,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu</key>
+                                <key>pveapi.qemu.master.status</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -3388,7 +3307,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <color>199C0D</color>
                                     <item>
                                         <host>Template pve api qemu</host>
-                                        <key>pveapi.qemu.nicin[{#PVEQEMUNIC}]</key>
+                                        <key>pveapi.qemu.nic.in[{#PVEQEMUNIC}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -3396,14 +3315,14 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <color>F63100</color>
                                     <item>
                                         <host>Template pve api qemu</host>
-                                        <key>pveapi.qemu.nicout[{#PVEQEMUNIC}]</key>
+                                        <key>pveapi.qemu.nic.out[{#PVEQEMUNIC}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
                     <master_item>
-                        <key>pveapi.master.qemu</key>
+                        <key>pveapi.qemu.master.status</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -3435,9 +3354,9 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>pveapi qemu snapshot discovery</name>
+                    <name>pveapi qemu discovery snapshot</name>
                     <type>DEPENDENT</type>
-                    <key>pveapi.qemu.snapshot.discovery</key>
+                    <key>pveapi.qemu.discovery.snapshot</key>
                     <delay>0</delay>
                     <lifetime>1h</lifetime>
                     <description>Discover snapshots for qemu.</description>
@@ -3462,7 +3381,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu.snapshot</key>
+                                <key>pveapi.qemu.master.snapshot</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3486,7 +3405,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>pveapi.master.qemu.snapshot</key>
+                                <key>pveapi.qemu.master.snapshot</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -3500,7 +3419,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         </trigger_prototype>
                     </trigger_prototypes>
                     <master_item>
-                        <key>pveapi.master.qemu.snapshot</key>
+                        <key>pveapi.qemu.master.snapshot</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -3681,6 +3600,42 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                 </screen>
             </screens>
         </template>
+        <template>
+            <template>Template pve api settings</template>
+            <name>Template pve api settings</name>
+            <description>This template monitors a Proxmox system. It requires access to port 8006 either from the zabbix server or from a zabbix proxy. It will not work through a zabbix agent.&#13;
+The template requires a Proxmox API key for access to the Proxmox API. The values should be set in the following macro's:&#13;
+{$PVESERVER} : Server to talk to for the API&#13;
+{$PVETOKENID} : API token ID&#13;
+{$PVESECRET} : API secret</description>
+            <groups>
+                <group>
+                    <name>PVE</name>
+                </group>
+            </groups>
+            <macros>
+                <macro>
+                    <macro>{$PVELOCKTIME}</macro>
+                    <value>2h</value>
+                    <description>Alert if lxc or qemu is locked for this long</description>
+                </macro>
+                <macro>
+                    <macro>{$PVESNAPSHOTAGE}</macro>
+                    <value>1w</value>
+                    <description>Alert if snapshots older than 1 week (default)</description>
+                </macro>
+                <macro>
+                    <macro>{$PVESNAPSHOTEXCLUDE}</macro>
+                    <value>test</value>
+                    <description>Ignore snapshots starting with this text</description>
+                </macro>
+                <macro>
+                    <macro>{$PVETESTPOOL}</macro>
+                    <value>test</value>
+                    <description>Systems in this pool will not generate triggers</description>
+                </macro>
+            </macros>
+        </template>
     </templates>
     <triggers>
         <trigger>
@@ -3748,9 +3703,9 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>(100*({Template pve api node:pveapi.node.mem.free.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &lt; 5</expression>
+            <expression>(100*({Template pve api node:pveapi.node.mem.used.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &gt; 95</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>(100*({Template pve api node:pveapi.node.mem.free.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &gt;10</recovery_expression>
+            <recovery_expression>(100*({Template pve api node:pveapi.node.mem.used.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &lt; 80</recovery_expression>
             <name>Memory less than 5% free on {$PVENODE}</name>
             <priority>WARNING</priority>
             <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
@@ -3781,6 +3736,13 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <name>Swap more than 50% used on {$PVENODE}</name>
             <priority>WARNING</priority>
             <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>({Template pve api lxc:pveapi.lxc.lock.count({$PVELOCKTIME})} =  {Template pve api lxc:pveapi.lxc.lock.count({$PVELOCKTIME},&quot;&quot;,ne)}) and {Template pve api lxc:pveapi.lxc.poolcheck.last()}=1</expression>
+            <name>{$PVELXCNAME} is locked: {ITEM.LASTVALUE1}</name>
+            <priority>AVERAGE</priority>
+            <description>{$PVELXCNAME} is stopped.</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
@@ -3819,7 +3781,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             <ymax_type_1>ITEM</ymax_type_1>
             <ymax_item_1>
                 <host>Template pve api datacenter</host>
-                <key>pveapi.cluster.nodes</key>
+                <key>pveapi.datacenter.clusternodes</key>
             </ymax_item_1>
             <graph_items>
                 <graph_item>
@@ -3827,7 +3789,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <color>199C0D</color>
                     <item>
                         <host>Template pve api datacenter</host>
-                        <key>pveapi.cluster.nodesonline</key>
+                        <key>pveapi.datacenter.clusternodesonline</key>
                     </item>
                 </graph_item>
             </graph_items>
@@ -3977,14 +3939,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <key>pveapi.node.mem.used</key>
                     </item>
                 </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <color>199C0D</color>
-                    <item>
-                        <host>Template pve api node</host>
-                        <key>pveapi.node.mem.free</key>
-                    </item>
-                </graph_item>
             </graph_items>
         </graph>
         <graph>
@@ -4080,14 +4034,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                         <key>pveapi.node.rootfs.used</key>
                     </item>
                 </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <color>199C0D</color>
-                    <item>
-                        <host>Template pve api node</host>
-                        <key>pveapi.node.rootfs.avail</key>
-                    </item>
-                </graph_item>
             </graph_items>
         </graph>
         <graph>
@@ -4105,14 +4051,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <item>
                         <host>Template pve api node</host>
                         <key>pveapi.node.swap.used</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <color>199C0D</color>
-                    <item>
-                        <host>Template pve api node</host>
-                        <key>pveapi.node.swap.free</key>
                     </item>
                 </graph_item>
             </graph_items>
