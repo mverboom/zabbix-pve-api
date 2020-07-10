@@ -8,6 +8,7 @@ It might work on older combinations, but this was not tested.
 The template set consists of 4 templates, of which only 1 should be manually
 assigned:
 
+* Template pve api settings
 * Template pve api datacenter
   * Template pve api node
   * Template pve api lxc
@@ -89,6 +90,28 @@ There are some generic terms that are being used:
 Template names have the following naming scheme:
 
 * Template pve api {scope}
+
+#### Template configuration
+
+The relation between the scopes is as follows:
+             +--> node
+             |
+datacenter --+--> qemu
+             |
+             +--> lxc
+
+The datacenter template uses host prototypes to create the node, qemu and lxc
+instances throught their relative templates.
+
+As there are no items in common between the templates, there is no link between
+the node,qemu,lxc templates and the datacenter template. Therefore any macro's
+defined in the datacenter template are not available in the node, qemu and lxc
+templates. To work around this, there is a:
+
+* Template pve api settings
+
+This only contains macro's to configure the workings of the other templates. All
+other templates link to this settings template and inherit the macro's.
 
 #### Item naming
 
