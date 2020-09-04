@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-08-27T13:35:37Z</date>
+    <date>2020-09-04T15:37:57Z</date>
     <groups>
         <group>
             <name>Production</name>
@@ -109,10 +109,10 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <output_format>JSON</output_format>
                     <triggers>
                         <trigger>
-                            <expression>{nodata(2m)}=1</expression>
+                            <expression>{nodata({$PVEAPITIMEOUT})}=1</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{nodata(2m)}=0</recovery_expression>
-                            <name>{$PVESERVER} Proxmox API unreachable</name>
+                            <recovery_expression>{nodata({$PVEAPITIMEOUT})}=0</recovery_expression>
+                            <name>{$PVESERVER} Proxmox API unreachable ({$PVEAPITIMEOUT})</name>
                             <priority>DISASTER</priority>
                         </trigger>
                     </triggers>
@@ -160,7 +160,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <host_prototypes>
                         <host_prototype>
                             <host>lxc {#PVELXCNAME}</host>
-                            <name>{#PVELXCNAME} (on {#PVENODE})</name>
+                            <name>{#PVELXCNAME} (on {#PVENODE}:{#PVELXCID})</name>
                             <group_links>
                                 <group_link>
                                     <group>
@@ -308,7 +308,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <host_prototypes>
                         <host_prototype>
                             <host>qemu {#PVEQEMUNAME}</host>
-                            <name>{#PVEQEMUNAME} (on {#PVENODE})</name>
+                            <name>{#PVEQEMUNAME} (on {#PVENODE}:{#PVEQEMUID})</name>
                             <group_links>
                                 <group_link>
                                     <group>
@@ -3554,23 +3554,33 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
             </groups>
             <macros>
                 <macro>
+                    <macro>{$PVEAPITIMEOUT}</macro>
+                    <value>2m</value>
+                    <description>Alert if api is unreachable for this long</description>
+                </macro>
+                <macro>
                     <macro>{$PVELOCKTIME}</macro>
                     <value>2h</value>
                     <description>Alert if lxc or qemu is locked for this long</description>
                 </macro>
                 <macro>
+                    <macro>{$PVEMEMLOWWATER}</macro>
+                    <value>80</value>
+                    <description>Revovery percentage of free memory</description>
+                </macro>
+                <macro>
                     <macro>{$PVESNAPSHOTAGE}</macro>
-                    <value>1w</value>
+                    <value>4w</value>
                     <description>Alert if snapshots older than 1 week (default)</description>
                 </macro>
                 <macro>
                     <macro>{$PVESNAPSHOTEXCLUDE}</macro>
-                    <value>test</value>
+                    <value>after_clean</value>
                     <description>Ignore snapshots starting with this text</description>
                 </macro>
                 <macro>
                     <macro>{$PVETESTPOOL}</macro>
-                    <value>test</value>
+                    <value>(test|disabled|maintenance)</value>
                     <description>Systems in this pool will not generate triggers</description>
                 </macro>
             </macros>
@@ -3644,7 +3654,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
         <trigger>
             <expression>(100*({Template pve api node:pveapi.node.mem.used.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &gt; 95</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>(100*({Template pve api node:pveapi.node.mem.used.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &lt; 80</recovery_expression>
+            <recovery_expression>(100*({Template pve api node:pveapi.node.mem.used.avg(10m)}/{Template pve api node:pveapi.node.mem.total.avg(10m)})) &lt; {$PVEMEMLOWWATER}</recovery_expression>
             <name>Memory less than 5% free on {$PVENODE}</name>
             <priority>WARNING</priority>
             <description>{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.</description>
