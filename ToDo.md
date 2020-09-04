@@ -141,3 +141,7 @@ This list contains items that need to be created, modified or removed
 * [ ] Qemu monitoring
   * [ ] Consistency of key naming
   * [ ] Update intervals
+
+## Extend
+
+* [ ] make testpools a variable with default value of 'test'
