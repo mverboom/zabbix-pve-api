@@ -2,7 +2,7 @@
 
 This template set uses the Proxmox Virtual Environment API to monitor sytems.
 
-This template set was developed on Zabbix 5.0 in combination with Proxmox 6.
+This template set was developed on Zabbix 5.4 in combination with Proxmox 6.
 It might work on older combinations, but this was not tested.
 
 The template set consists of 4 templates, of which only 1 should be manually
