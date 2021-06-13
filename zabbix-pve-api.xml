@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-06-05T07:44:27Z</date>
+    <date>2021-06-13T08:00:01Z</date>
     <groups>
         <group>
             <uuid>756d97bb256b458094d71ee0c547804e</uuid>
@@ -1974,7 +1974,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                             <type>CALCULATED</type>
                             <key>pveapi.node.lvm.used[{#PVENODELV}]</key>
                             <units>B</units>
-                            <params>pveapi.node.lvm.size[{#PVENODELV}] - pveapi.node.lvm.free[{#PVENODELV}]</params>
+                            <params>last(//pveapi.node.lvm.size[{#PVENODELV}]) - last(//pveapi.node.lvm.free[{#PVENODELV}])</params>
                             <tags>
                                 <tag>
                                     <tag>Application</tag>
