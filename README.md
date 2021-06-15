@@ -144,8 +144,6 @@ monitor the specific items for the host.
 
 Because the VM's are not hierarchically linked to the node they run on, data will
 
-
-
 ## Configuration
 
 There are two steps in configuring the usage of this template set:
@@ -188,6 +186,10 @@ To enable the template on a Proxmox server, go to the host within Zabbix:
 * Open Zabbix web interfaces
 * Go to Configuration -> Hosts
 * Select the host
+
+Make sure the host has an interface. This can be a zabbix agent, and does not have to
+communicate with a zabbix-agent on the Proxmox system. It can be the zabbix server, so
+for example a zabbix-agent at 127.0.0.1.
 
 Now assign the template
 * Go to tab ```Templates```
