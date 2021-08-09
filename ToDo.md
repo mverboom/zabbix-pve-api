@@ -2,6 +2,10 @@
 
 This list contains items that need to be created, modified or removed
 
+## Feature requests
+
+* Macro configurable autoclose of the trigger for failed tasks. Either close them after a specific amount of time or leave them open to be manually closed.
+
 ## Create
 
 * Datacenter template
