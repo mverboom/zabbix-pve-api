@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-08-10T13:36:33Z</date>
+    <date>2021-08-13T11:36:15Z</date>
     <groups>
         <group>
             <uuid>756d97bb256b458094d71ee0c547804e</uuid>
@@ -177,6 +177,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <type>DEPENDENT</type>
                     <key>pveapi.datacenter.discovery.lxc</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <host_prototypes>
                         <host_prototype>
                             <uuid>018549507b8045619f16f8aeae4c9dc4</uuid>
@@ -256,6 +257,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <type>DEPENDENT</type>
                     <key>pveapi.datacenter.discovery.node</key>
                     <delay>0</delay>
+                    <lifetime>10d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>d1187755de3744eeaccb702a74c18bac</uuid>
@@ -340,6 +342,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <type>DEPENDENT</type>
                     <key>pveapi.datacenter.discovery.qemu</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <host_prototypes>
                         <host_prototype>
                             <uuid>f670c3641b644ad6a00eb1498743a1c5</uuid>
@@ -653,6 +656,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <delay>5m</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/snapshot</url>
                     <headers>
                         <header>
@@ -676,6 +680,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <key>pveapi.lxc.master.status</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/lxc/{$PVELXCID}/status/current</url>
                     <headers>
                         <header>
@@ -911,6 +916,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <error_handler_params>0</error_handler_params>
                         </step>
                     </preprocessing>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/pools</url>
                     <headers>
                         <header>
@@ -1422,6 +1428,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/status</url>
                     <headers>
                         <header>
@@ -1468,6 +1475,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master.lvm</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/lvm</url>
                     <headers>
                         <header>
@@ -1490,6 +1498,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master.lvmthin</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/lvmthin</url>
                     <headers>
                         <header>
@@ -1512,6 +1521,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master.services</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/services</url>
                     <headers>
                         <header>
@@ -1534,6 +1544,16 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master.storagepools</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <parameters>
+                                <parameter>^$</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
+                        </step>
+                    </preprocessing>
                     <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/storage</url>
                     <headers>
@@ -1557,6 +1577,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <key>pveapi.node.master.zfs</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/disks/zfs</url>
                     <headers>
                         <header>
@@ -1791,6 +1812,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.disks</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>376fe3ffdb5542e19b661463cf29c9d2</uuid>
@@ -1910,6 +1932,8 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                             <parameters>
                                 <parameter>$.body.data</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -1919,6 +1943,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.lvm</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>c7761e7882814dc39c72e0d9c071f75c</uuid>
@@ -2022,6 +2047,8 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                             <parameters>
                                 <parameter>$.body.data.children</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -2031,6 +2058,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.lvmthin</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>44dee8a28f7643bb85f0cc209e1fa9a5</uuid>
@@ -2263,6 +2291,8 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                             <parameters>
                                 <parameter>$.body.data</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -2272,6 +2302,7 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.services</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>c6c7d3ff89c94965b02f8c1a94e2a811</uuid>
@@ -2323,6 +2354,8 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                             <parameters>
                                 <parameter>$.body.data</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -2332,6 +2365,7 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.storagepool</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>1410e9b5e846476aa726ae9ba897dd08</uuid>
@@ -2466,6 +2500,8 @@ last(/Template pve api node/pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}])
                             <parameters>
                                 <parameter>$.body.data</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -2475,6 +2511,7 @@ last(/Template pve api node/pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}])
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.zfs</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>662c0ff1f13c4778b59c935b2a28bebb</uuid>
@@ -2676,6 +2713,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                             <parameters>
                                 <parameter>$.body.data</parameter>
                             </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
                         </step>
                     </preprocessing>
                 </discovery_rule>
@@ -3111,6 +3150,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                     <delay>5m</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/snapshot</url>
                     <headers>
                         <header>
@@ -3133,6 +3173,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                     <key>pveapi.qemu.master.status</key>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/status/current</url>
                     <headers>
                         <header>
@@ -3269,6 +3310,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                             <error_handler_params>0</error_handler_params>
                         </step>
                     </preprocessing>
+                    <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/pools</url>
                     <headers>
                         <header>
@@ -3343,6 +3385,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                     <type>DEPENDENT</type>
                     <key>pveapi.qemu.discovery.blockdev</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <description>Discover blockdevices for qemu.
 The preprocessing is pretty gross. Need to modify an array to items with names.</description>
                     <item_prototypes>
@@ -3367,6 +3410,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <parameters>
                                         <parameter/>
                                     </parameters>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -3401,6 +3446,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <parameters>
                                         <parameter/>
                                     </parameters>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -3434,6 +3481,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <parameters>
                                         <parameter/>
                                     </parameters>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -3467,6 +3516,8 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                     <parameters>
                                         <parameter/>
                                     </parameters>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -3542,7 +3593,6 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <parameter>$.body.data.blockstat[*]~</parameter>
                             </parameters>
                             <error_handler>CUSTOM_VALUE</error_handler>
-                            <error_handler_params>{ &quot;data&quot;:[] }</error_handler_params>
                         </step>
                         <step>
                             <type>STR_REPLACE</type>
@@ -3572,6 +3622,14 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                                 <parameter>blockdev&quot;:&quot;&quot;}</parameter>
                             </parameters>
                         </step>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <parameters>
+                                <parameter>^$</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>[]</error_handler_params>
+                        </step>
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
@@ -3580,6 +3638,7 @@ The preprocessing is pretty gross. Need to modify an array to items with names.<
                     <type>DEPENDENT</type>
                     <key>pveapi.qemu.discovery.nic</key>
                     <delay>0</delay>
+                    <lifetime>5d</lifetime>
                     <description>Discover network interfaces for qemu.
 The preprocessing is pretty gross. Need to modify an array to items with names.</description>
                     <item_prototypes>
