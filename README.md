@@ -163,14 +163,16 @@ items if they are not required.
 
 ### Creating API token
 
-Access to the information in Proxmox is done through the API and needs authentication. For this
-an API token is used.
+Access to the information in Proxmox is done through the API and needs
+authentication. For this an API token is used.
 
-Withing Proxmox an API token is configured on the datacenter level and is valid for all nodes in a
-cluster. So for a set of machines that form a cluster, only 1 API token is needed.
+Withing Proxmox an API token is configured on the datacenter level and is valid
+for all nodes in a cluster. So for a set of machines that form a cluster, only
+1 API token is needed.
 
-To generate an API token a valid user needs to be present. Depending on security requirements different
-options can be used to setup the API token. The documentation within Proxmox can help here.
+To generate an API token a valid user needs to be present. Depending on
+security requirements different options can be used to setup the API token. The
+documentation within Proxmox can help here.
 
 The setup can be found on the Proxmox server in the following place
 
@@ -182,6 +184,8 @@ This part of the interface will allow you to create a token. The two parts that 
 
 * TokenID (user@authenticationrealm!tokenid)
 * Secret (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+
+To assign least privileges to the token read the API-PERMISSIONS.md
 
 ### Configuring the template
 

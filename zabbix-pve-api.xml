@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-08-13T11:36:15Z</date>
+    <date>2021-09-20T06:35:24Z</date>
     <groups>
         <group>
             <uuid>756d97bb256b458094d71ee0c547804e</uuid>
@@ -101,6 +101,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <name>pveapi datacenter master resources</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.datacenter.master.resources</key>
+                    <delay>10m</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <description>Item specifically does not use cluster/config/nodes as that has no information for single node systems.</description>
@@ -122,7 +123,7 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <triggers>
                         <trigger>
                             <uuid>db5709857e994f9e85376cec7ae1b281</uuid>
-                            <expression>nodata(/Template pve api datacenter/pveapi.datacenter.master.resources,2m)=1</expression>
+                            <expression>nodata(/Template pve api datacenter/pveapi.datacenter.master.resources,20m)=1</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
                             <recovery_expression>nodata(/Template pve api datacenter/pveapi.datacenter.master.resources,2m)=0</recovery_expression>
                             <name>{$PVESERVER} Proxmox API unreachable</name>
@@ -135,14 +136,9 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                     <name>pveapi datacenter master tasks</name>
                     <type>HTTP_AGENT</type>
                     <key>pveapi.datacenter.master.tasks</key>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.body.data[?(@.status != &quot;OK&quot;)].id.length()</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
+                    <delay>2m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
                     <timeout>10s</timeout>
                     <url>https://{$PVESERVER}:8006/api2/json/cluster/tasks</url>
                     <headers>
@@ -158,16 +154,86 @@ The template requires a Proxmox API key for access to the Proxmox API. The value
                             <value>PVE Datacenter</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>50472fc2be7249b782cd1017d19eeb2e</uuid>
+                    <name>Tasks failed</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.datacenter.tasks.failed</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>var data = JSON.parse(value);
+const curtime = Math.round(Date.now() / 1000)
+
+for (x in data.body.data) {
+   if ('starttime' in data.body.data[x])
+      data.body.data[x].starttime = curtime - data.body.data[x].starttime;
+   if ('endtime' in data.body.data[x])
+      data.body.data[x].endtime = curtime - data.body.data[x].endtime;
+}
+
+return JSON.stringify(data);</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.data[?(@.starttime &lt; &quot;{$PVETASKTIME}&quot; &amp;&amp; @.endtime &amp;&amp; @.status != &quot;OK&quot;)].length()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pveapi.datacenter.master.tasks</key>
+                    </master_item>
                     <triggers>
                         <trigger>
                             <uuid>462bb47210904e90b98edcbca6f66973</uuid>
-                            <expression>last(/Template pve api datacenter/pveapi.datacenter.master.tasks,#1) &gt; last(/Template pve api datacenter/pveapi.datacenter.master.tasks,#2)</expression>
+                            <expression>last(/Template pve api datacenter/pveapi.datacenter.tasks.failed,#1) &gt; 0</expression>
                             <recovery_mode>NONE</recovery_mode>
                             <name>{$PVESERVER} tasks failed</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <uuid>188374de2473498c9345f006d374e32b</uuid>
+                    <name>Tasks running</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.datacenter.tasks.running</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.data[?(!@.endtime)].length()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pveapi.datacenter.master.tasks</key>
+                    </master_item>
+                </item>
+                <item>
+                    <uuid>0399381bb22e49008af92918f68005ae</uuid>
+                    <name>Tasks total</name>
+                    <type>DEPENDENT</type>
+                    <key>pveapi.datacenter.tasks.total</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.body.data[*].length()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pveapi.datacenter.master.tasks</key>
+                    </master_item>
                 </item>
             </items>
             <discovery_rules>
@@ -1842,7 +1908,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                             <trigger_prototypes>
                                 <trigger_prototype>
                                     <uuid>bc24d66114454e9ebf9e9fc0c8ba7549</uuid>
-                                    <expression>find(/Template pve api node/pveapi.node.disk.health[{#PVENODEDISK}],,&quot;regexp&quot;,&quot;PASSED|OK&quot;)=0</expression>
+                                    <expression>find(/Template pve api node/pveapi.node.disk.health[{#PVENODEDISK}],,&quot;regexp&quot;,&quot;PASSED|OK|UNKNOWN&quot;)=0</expression>
                                     <name>{$PVENODE} disk {#PVENODEDISK} health failed</name>
                                     <priority>DISASTER</priority>
                                     <manual_close>YES</manual_close>
@@ -4055,6 +4121,11 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                     <description>Ignore snapshots starting with this text</description>
                 </macro>
                 <macro>
+                    <macro>{$PVETASKTIME}</macro>
+                    <value>86400</value>
+                    <description>Alert if tasks fail between now and value seconds ago</description>
+                </macro>
+                <macro>
                     <macro>{$PVETESTPOOL}</macro>
                     <value>test</value>
                     <description>Systems in this pool will not generate triggers</description>
@@ -4232,6 +4303,37 @@ avg(/Template pve api lxc/pveapi.lxc.diskfree,10m)&gt;5 and last(/Template pve a
                     <item>
                         <host>Template pve api datacenter</host>
                         <key>pveapi.datacenter.clusternodesonline</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>5b4dc88108884e82a8c5673610a6514c</uuid>
+            <name>Cluster tasks</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template pve api datacenter</host>
+                        <key>pveapi.datacenter.tasks.failed</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template pve api datacenter</host>
+                        <key>pveapi.datacenter.tasks.running</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template pve api datacenter</host>
+                        <key>pveapi.datacenter.tasks.total</key>
                     </item>
                 </graph_item>
             </graph_items>
