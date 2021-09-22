@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-09-20T06:35:24Z</date>
+    <date>2021-09-22T04:56:37Z</date>
     <groups>
         <group>
             <uuid>756d97bb256b458094d71ee0c547804e</uuid>
@@ -192,7 +192,6 @@ return JSON.stringify(data);</parameter>
                         <trigger>
                             <uuid>462bb47210904e90b98edcbca6f66973</uuid>
                             <expression>last(/Template pve api datacenter/pveapi.datacenter.tasks.failed,#1) &gt; 0</expression>
-                            <recovery_mode>NONE</recovery_mode>
                             <name>{$PVESERVER} tasks failed</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
