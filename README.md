@@ -185,7 +185,7 @@ This part of the interface will allow you to create a token. The two parts that 
 * TokenID (user@authenticationrealm!tokenid)
 * Secret (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
 
-To assign least privileges to the token read the API-PERMISSIONS.md
+To assign least privileges to the token read the [a relative link](API-PERMISSIONS.md).
 
 ### Configuring the template
 
