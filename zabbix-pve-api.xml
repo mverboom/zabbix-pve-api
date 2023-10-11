@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>6.0</version>
-    <date>2022-03-13T10:50:52Z</date>
-    <groups>
-        <group>
+    <version>6.4</version>
+    <template_groups>
+        <template_group>
             <uuid>756d97bb256b458094d71ee0c547804e</uuid>
             <name>Production</name>
-        </group>
-        <group>
-            <uuid>6771a206416040f98e9c7059885e982e</uuid>
-            <name>PVE LXC</name>
-        </group>
-        <group>
-            <uuid>3cdd708e74354c74af5de0d69635648b</uuid>
-            <name>PVE Node</name>
-        </group>
-        <group>
-            <uuid>36d5230d3b8e40f2a4c4eeb35f9d74c1</uuid>
-            <name>PVE Qemu</name>
-        </group>
-        <group>
+        </template_group>
+        <template_group>
             <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
             <name>Templates</name>
-        </group>
-    </groups>
+        </template_group>
+    </template_groups>
+    <host_groups>
+        <host_group>
+            <uuid>6771a206416040f98e9c7059885e982e</uuid>
+            <name>PVE LXC</name>
+        </host_group>
+        <host_group>
+            <uuid>3cdd708e74354c74af5de0d69635648b</uuid>
+            <name>PVE Node</name>
+        </host_group>
+        <host_group>
+            <uuid>36d5230d3b8e40f2a4c4eeb35f9d74c1</uuid>
+            <name>PVE Qemu</name>
+        </host_group>
+    </host_groups>
     <templates>
         <template>
             <uuid>8b735b851b6a4174a12f8ec4add50d47</uuid>
@@ -492,7 +493,7 @@ return JSON.stringify(data);</parameter>
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <width>24</width>
                                     <height>5</height>
                                     <fields>
@@ -500,8 +501,8 @@ return JSON.stringify(data);</parameter>
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>Cluster status</name>
                                                 <host>Template pve api datacenter</host>
+                                                <name>Cluster status</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -971,15 +972,16 @@ return JSON.stringify(data);</parameter>
                         <step>
                             <type>MATCHES_REGEX</type>
                             <parameters>
-                                <parameter>^{$PVETESTPOOL}</parameter>
+                                <parameter>{$PVENOPROBLEMPOOL}</parameter>
                             </parameters>
                             <error_handler>CUSTOM_VALUE</error_handler>
                             <error_handler_params>1</error_handler_params>
                         </step>
                         <step>
-                            <type>NOT_MATCHES_REGEX</type>
+                            <type>IN_RANGE</type>
                             <parameters>
-                                <parameter>^{$PVETESTPOOL}</parameter>
+                                <parameter>1</parameter>
+                                <parameter>2</parameter>
                             </parameters>
                             <error_handler>CUSTOM_VALUE</error_handler>
                             <error_handler_params>0</error_handler_params>
@@ -1183,26 +1185,26 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>PLAIN_TEXT</type>
+                                    <type>plaintext</type>
                                     <width>12</width>
                                     <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemids</name>
+                                            <value>
+                                                <host>Template pve api lxc</host>
+                                                <key>pveapi.lxc.status</key>
+                                            </value>
+                                        </field>
                                         <field>
                                             <type>INTEGER</type>
                                             <name>show_lines</name>
                                             <value>1</value>
                                         </field>
-                                        <field>
-                                            <type>ITEM</type>
-                                            <name>itemids</name>
-                                            <value>
-                                                <key>pveapi.lxc.status</key>
-                                                <host>Template pve api lxc</host>
-                                            </value>
-                                        </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <y>2</y>
                                     <width>12</width>
                                     <height>5</height>
@@ -1211,14 +1213,46 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api lxc</host>
                                                 <name>CPU</name>
-                                                <host>Template pve api lxc</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
+                                    <y>7</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api lxc</host>
+                                                <name>Memory usage</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graph</type>
+                                    <y>12</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api lxc</host>
+                                                <name>Disk usage</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>2</y>
                                     <width>12</width>
@@ -1228,30 +1262,14 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api lxc</host>
                                                 <name>Uptime</name>
-                                                <host>Template pve api lxc</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <y>7</y>
-                                    <width>12</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Memory usage</name>
-                                                <host>Template pve api lxc</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>7</y>
                                     <width>12</width>
@@ -1261,30 +1279,14 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api lxc</host>
                                                 <name>Swap usage</name>
-                                                <host>Template pve api lxc</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <y>12</y>
-                                    <width>12</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Disk usage</name>
-                                                <host>Template pve api lxc</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>12</y>
                                     <width>12</width>
@@ -1294,8 +1296,8 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>Network traffic</name>
                                                 <host>Template pve api lxc</host>
+                                                <name>Network traffic</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -2075,9 +2077,9 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                             <uuid>adeb4e86ec25400ba407f7d2ddb7c4fa</uuid>
                             <name>LVM {#PVENODELVM} used</name>
                             <type>CALCULATED</type>
-                            <key>pveapi.node.lvm.used[{#PVENODELV}]</key>
+                            <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
                             <units>B</units>
-                            <params>last(//pveapi.node.lvm.size[{#PVENODELV}]) - last(//pveapi.node.lvm.free[{#PVENODELV}])</params>
+                            <params>last(//pveapi.node.lvm.size[{#PVENODELVM}]) - last(//pveapi.node.lvm.free[{#PVENODELVM}])</params>
                             <tags>
                                 <tag>
                                     <tag>Application</tag>
@@ -2102,7 +2104,7 @@ last(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])&gt;{$PVE
                                     <color>199C0D</color>
                                     <item>
                                         <host>Template pve api node</host>
-                                        <key>pveapi.node.lvm.used[{#PVENODELV}]</key>
+                                        <key>pveapi.node.lvm.used[{#PVENODELVM}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -2378,6 +2380,16 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                     <type>DEPENDENT</type>
                     <key>pveapi.node.discovery.services</key>
                     <delay>0</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#PVENODESERVICEUNITSTATE}</macro>
+                                <value>^not-found$</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
                     <lifetime>5d</lifetime>
                     <item_prototypes>
                         <item_prototype>
@@ -2419,6 +2431,10 @@ last(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))
                         <key>pveapi.node.master.services</key>
                     </master_item>
                     <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVENODESERVICEUNITSTATE}</lld_macro>
+                            <path>$.['unit-state']</path>
+                        </lld_macro_path>
                         <lld_macro_path>
                             <lld_macro>{#PVENODESERVICE}</lld_macro>
                             <path>$.name</path>
@@ -2803,15 +2819,10 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <width>24</width>
                                     <height>5</height>
                                     <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>source_type</name>
-                                            <value>3</value>
-                                        </field>
                                         <field>
                                             <type>INTEGER</type>
                                             <name>columns</name>
@@ -2821,9 +2832,14 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>ITEM_PROTOTYPE</type>
                                             <name>itemid</name>
                                             <value>
-                                                <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
                                                 <host>Template pve api node</host>
+                                                <key>pveapi.node.disk.wearout[{#PVENODEDISK}]</key>
                                             </value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>source_type</name>
+                                            <value>3</value>
                                         </field>
                                     </fields>
                                 </widget>
@@ -2838,7 +2854,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <width>24</width>
                                     <height>5</height>
                                     <fields>
@@ -2851,8 +2867,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>LVM {#PVENODELVM} used</name>
                                                 <host>Template pve api node</host>
+                                                <name>LVM {#PVENODELVM} used</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -2868,7 +2884,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <width>12</width>
                                     <height>5</height>
                                     <fields>
@@ -2881,14 +2897,14 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>LVMThin {#PVENODELVMTHIN} usage</name>
                                                 <host>Template pve api node</host>
+                                                <name>LVMThin {#PVENODELVMTHIN} usage</name>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <x>12</x>
                                     <width>12</width>
                                     <height>5</height>
@@ -2902,8 +2918,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>LVMThin {#PVENODELVMTHIN} metadata usage</name>
                                                 <host>Template pve api node</host>
+                                                <name>LVMThin {#PVENODELVMTHIN} metadata usage</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -2919,62 +2935,94 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>PLAIN_TEXT</type>
+                                    <type>plaintext</type>
                                     <width>12</width>
                                     <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>show_lines</name>
-                                            <value>1</value>
-                                        </field>
                                         <field>
                                             <type>ITEM</type>
                                             <name>itemids</name>
                                             <value>
+                                                <host>Template pve api node</host>
                                                 <key>pveapi.node.pveversion</key>
-                                                <host>Template pve api node</host>
                                             </value>
                                         </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>PLAIN_TEXT</type>
-                                    <x>12</x>
-                                    <width>12</width>
-                                    <fields>
                                         <field>
                                             <type>INTEGER</type>
                                             <name>show_lines</name>
                                             <value>1</value>
                                         </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graph</type>
+                                    <y>2</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api node</host>
+                                                <name>CPU ({?last(//pveapi.node.cpus)} CPU(s))</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graph</type>
+                                    <y>7</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api node</host>
+                                                <name>Memory ({?last(//pveapi.node.mem.total)})</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graph</type>
+                                    <y>12</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api node</host>
+                                                <name>Root filesystem ({?last(//pveapi.node.rootfs.total)})</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>plaintext</type>
+                                    <x>12</x>
+                                    <width>12</width>
+                                    <fields>
                                         <field>
                                             <type>ITEM</type>
                                             <name>itemids</name>
                                             <value>
+                                                <host>Template pve api node</host>
                                                 <key>pveapi.node.kernelversion</key>
-                                                <host>Template pve api node</host>
                                             </value>
                                         </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <y>2</y>
-                                    <width>12</width>
-                                    <height>5</height>
-                                    <fields>
                                         <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>CPU ({?last(//pveapi.node.cpus)} CPU(s))</name>
-                                                <host>Template pve api node</host>
-                                            </value>
+                                            <type>INTEGER</type>
+                                            <name>show_lines</name>
+                                            <value>1</value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>2</y>
                                     <width>12</width>
@@ -2984,30 +3032,14 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api node</host>
                                                 <name>Load average</name>
-                                                <host>Template pve api node</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <y>7</y>
-                                    <width>12</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Memory ({?last(//pveapi.node.mem.total)})</name>
-                                                <host>Template pve api node</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>7</y>
                                     <width>12</width>
@@ -3017,30 +3049,14 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api node</host>
                                                 <name>Swap ({?last(//pveapi.node.swap.total)})</name>
-                                                <host>Template pve api node</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <y>12</y>
-                                    <width>12</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Root filesystem ({?last(//pveapi.node.rootfs.total)})</name>
-                                                <host>Template pve api node</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <x>12</x>
                                     <y>12</y>
                                     <width>12</width>
@@ -3050,8 +3066,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>KSM</name>
                                                 <host>Template pve api node</host>
+                                                <name>KSM</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -3067,7 +3083,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <width>24</width>
                                     <height>5</height>
                                     <fields>
@@ -3080,8 +3096,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>storage pool {#PVENODESTORAGEPOOL} usage ({#PVENODESTORAGEPOOLTYPE})</name>
                                                 <host>Template pve api node</host>
+                                                <name>storage pool {#PVENODESTORAGEPOOL} usage ({#PVENODESTORAGEPOOLTYPE})</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -3097,7 +3113,7 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <width>12</width>
                                     <height>5</height>
                                     <fields>
@@ -3110,14 +3126,14 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>zpool {#PVENODEZFSPOOL} usage ({?last(//pveapi.node.zfs.health[{#PVENODEZFSPOOL}])})</name>
                                                 <host>Template pve api node</host>
+                                                <name>zpool {#PVENODEZFSPOOL} usage ({?last(//pveapi.node.zfs.health[{#PVENODEZFSPOOL}])})</name>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <x>12</x>
                                     <width>12</width>
                                     <height>5</height>
@@ -3131,8 +3147,8 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>zpool {#PVENODEZFSPOOL} fragmentation</name>
                                                 <host>Template pve api node</host>
+                                                <name>zpool {#PVENODEZFSPOOL} fragmentation</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -3374,15 +3390,16 @@ last(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))
                         <step>
                             <type>MATCHES_REGEX</type>
                             <parameters>
-                                <parameter>^{$PVETESTPOOL}</parameter>
+                                <parameter>{$PVENOPROBLEMPOOL}</parameter>
                             </parameters>
                             <error_handler>CUSTOM_VALUE</error_handler>
                             <error_handler_params>1</error_handler_params>
                         </step>
                         <step>
-                            <type>NOT_MATCHES_REGEX</type>
+                            <type>IN_RANGE</type>
                             <parameters>
-                                <parameter>^{$PVETESTPOOL}</parameter>
+                                <parameter>1</parameter>
+                                <parameter>2</parameter>
                             </parameters>
                             <error_handler>CUSTOM_VALUE</error_handler>
                             <error_handler_params>0</error_handler_params>
@@ -3964,26 +3981,26 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                         <page>
                             <widgets>
                                 <widget>
-                                    <type>PLAIN_TEXT</type>
+                                    <type>plaintext</type>
                                     <width>8</width>
                                     <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemids</name>
+                                            <value>
+                                                <host>Template pve api qemu</host>
+                                                <key>pveapi.qemu.status</key>
+                                            </value>
+                                        </field>
                                         <field>
                                             <type>INTEGER</type>
                                             <name>show_lines</name>
                                             <value>1</value>
                                         </field>
-                                        <field>
-                                            <type>ITEM</type>
-                                            <name>itemids</name>
-                                            <value>
-                                                <key>pveapi.qemu.status</key>
-                                                <host>Template pve api qemu</host>
-                                            </value>
-                                        </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
+                                    <type>graph</type>
                                     <y>2</y>
                                     <width>8</width>
                                     <height>5</height>
@@ -3992,48 +4009,14 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                                             <type>GRAPH</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api qemu</host>
                                                 <name>CPU ({?last(//pveapi.qemu.cpus)} CPU(s))</name>
-                                                <host>Template pve api qemu</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <x>8</x>
-                                    <y>2</y>
-                                    <width>8</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Memory usage</name>
-                                                <host>Template pve api qemu</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_CLASSIC</type>
-                                    <x>16</x>
-                                    <y>2</y>
-                                    <width>8</width>
-                                    <height>5</height>
-                                    <fields>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid</name>
-                                            <value>
-                                                <name>Uptime</name>
-                                                <host>Template pve api qemu</host>
-                                            </value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graphprototype</type>
                                     <y>7</y>
                                     <width>8</width>
                                     <height>5</height>
@@ -4047,14 +4030,31 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
+                                                <host>Template pve api qemu</host>
                                                 <name>{#PVEQEMUNIC} traffic</name>
-                                                <host>Template pve api qemu</host>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graph</type>
+                                    <x>8</x>
+                                    <y>2</y>
+                                    <width>8</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api qemu</host>
+                                                <name>Memory usage</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graphprototype</type>
                                     <x>8</x>
                                     <y>7</y>
                                     <width>8</width>
@@ -4069,14 +4069,31 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>{#PVEQEMUBLOCKDEV} read/write</name>
                                                 <host>Template pve api qemu</host>
+                                                <name>{#PVEQEMUBLOCKDEV} read/write</name>
                                             </value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>GRAPH_PROTOTYPE</type>
+                                    <type>graph</type>
+                                    <x>16</x>
+                                    <y>2</y>
+                                    <width>8</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template pve api qemu</host>
+                                                <name>Uptime</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>graphprototype</type>
                                     <x>16</x>
                                     <y>7</y>
                                     <width>8</width>
@@ -4091,8 +4108,8 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                                             <type>GRAPH_PROTOTYPE</type>
                                             <name>graphid</name>
                                             <value>
-                                                <name>{#PVEQEMUBLOCKDEV} iops</name>
                                                 <host>Template pve api qemu</host>
+                                                <name>{#PVEQEMUBLOCKDEV} iops</name>
                                             </value>
                                         </field>
                                     </fields>
@@ -4123,6 +4140,11 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                     <description>Alert if lxc or qemu is locked for this long</description>
                 </macro>
                 <macro>
+                    <macro>{$PVENOPROBLEMPOOL}</macro>
+                    <value>^test$</value>
+                    <description>Systems in pools matching this regex will not generate problems</description>
+                </macro>
+                <macro>
                     <macro>{$PVESNAPSHOTAGE}</macro>
                     <value>1w</value>
                     <description>Alert if snapshots older than 1 week (default)</description>
@@ -4136,11 +4158,6 @@ last(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])&gt;{$
                     <macro>{$PVETASKTIME}</macro>
                     <value>86400</value>
                     <description>Alert if tasks fail between now and value seconds ago</description>
-                </macro>
-                <macro>
-                    <macro>{$PVETESTPOOL}</macro>
-                    <value>test</value>
-                    <description>Systems in this pool will not generate triggers</description>
                 </macro>
             </macros>
         </template>
