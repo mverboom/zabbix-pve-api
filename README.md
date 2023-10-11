@@ -5,7 +5,7 @@ This template set uses the Proxmox Virtual Environment API to monitor sytems.
 It is in beta state and might work or it might not. Still working on documentation
 and testing.
 
-This template set was developed on Zabbix 6.0 in combination with Proxmox 7.
+This template set was developed on Zabbix 6.4 in combination with Proxmox 7.
 It might work on older combinations, but this was not tested.
 
 The template set consists of 4 templates, of which only 1 should be manually
@@ -22,7 +22,7 @@ installation to Zabbix.
 
 ## Features
 
-This is an exceprt of the features of the template set:
+This is an excerpt of the features of the template set:
 * Automatic creation of host objects for:
   * All Proxmox nodes in a cluster (or single host for non clusters)
   * LXC containers
@@ -36,6 +36,7 @@ This is an exceprt of the features of the template set:
   * ZFS pools
   * Logical Volumes
   * Disk smart status
+  * Services
 * LXC container monitoring of
   * CPU
   * Memory
@@ -247,25 +248,33 @@ to specify multiple snapshot names that will be excluded. For example the value
 * test
 * upgrade
 
-```{$PVETESTPOOL}```
+```{$PVENOPROBLEMPOOL}```
 
-Default value: test
+Default value: ^test$
 
 Any Qemu virtual machines or LXC containers assigned to a pool where the name
-of the pool start with the value of this macro will be excluded from generating
-alerts.
-The value will match the start of the name of the pool. So the default value 
-of ```test``` will match:
+of the pool matches the regex of this macro will be excluded from generating
+problems.
+The value will match the name of the pool. So the default value
+of ```^test$``` will match exactly:
 * test
-* testpool
-* testing
 
-The value of the macro is used in a regular expressing. Therefore it is possible
+The value of the macro is used in a regular expression. Therefore it is possible
 to specify multiple pool names that will be excluded. For example the value
-```(test|project)``` will match all pools names starting with
+```(test|project)``` will match all pool names containing 'test' and 'project':
 * test
 * project
+* testmachines
+* exampleproject
 
+And a value of ```^(development|test|acceptance)$``` will match all pool pool names that have a name of exactly:
+* development
+* test
+* acceptance
+
+The value ```^(((?!^production$).)*)$``` is a negative lookahead regex which will match all pools, except for pool 'production'
+
+Testing regexes can be done here: https://regex101.com
 
 ## Notes
 
