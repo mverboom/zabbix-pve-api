@@ -8,6 +8,8 @@ and testing.
 This template set was developed on Zabbix 6.4 in combination with Proxmox 7.
 It might work on older combinations, but this was not tested.
 
+Exported templates are in json format created on Zabbix 6.0.
+
 The template set consists of 4 templates, of which only 1 should be manually
 assigned:
 
