@@ -5,6 +5,7 @@ in the PVE API.
 
 The minimum permission roles seem to be:
 * VM.Audit
+* VM.Monitor (required for guest agent disk monitoring)
 * Pool.Audit
 * Sys.Audit
 
@@ -96,4 +97,8 @@ Template pve api qemu
 * pveapi qemu master status
   * https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/status/current
   * Check: ["perm","/vms/{vmid}",["VM.Audit"]]
-* Summary: Pool.Audit + VM.Audit
+* pveapi qemu master fsinfo (guest agent)
+  * https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/agent/get-fsinfo
+  * Check: ["perm","/vms/{vmid}",["VM.Monitor"]]
+  * **Required for disk usage monitoring from within the guest OS**
+* Summary: Pool.Audit + VM.Audit + **VM.Monitor**
