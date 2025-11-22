@@ -298,7 +298,7 @@
                             {
                                 "type": "JSONPATH",
                                 "parameters": [
-                                    "$.body.data[?(@.type == \"lxc\")]"
+                                    "$.body.data[?(@.type == \"lxc\" && ! (@.name =~ \"{$PVEVMEXCLUDE}\"))]"
                                 ],
                                 "error_handler": "DISCARD_VALUE"
                             }
@@ -463,7 +463,7 @@
                             {
                                 "type": "JSONPATH",
                                 "parameters": [
-                                    "$.body.data[?(@.type == \"qemu\")]"
+                                    "$.body.data[?(@.type == \"qemu\" && ! (@.name =~ \"{$PVEVMEXCLUDE}\"))]"
                                 ],
                                 "error_handler": "DISCARD_VALUE"
                             }
@@ -3221,6 +3221,71 @@
                         ]
                     },
                     {
+                        "uuid": "b9c8d7e6f5a4489daabbccddeeff0007",
+                        "name": "pveapi qemu master fsinfo",
+                        "type": "HTTP_AGENT",
+                        "key": "pveapi.qemu.master.fsinfo",
+                        "delay": "5m",
+                        "history": "0",
+                        "trends": "0",
+                        "value_type": "TEXT",
+                        "timeout": "10s",
+                        "url": "https://{$PVESERVER}:8006/api2/json/nodes/{$PVENODE}/qemu/{$PVEQEMUID}/agent/get-fsinfo",
+                        "headers": [
+                            {
+                                "name": "Authorization",
+                                "value": "PVEAPIToken={$PVETOKENID}={$PVESECRET}"
+                            }
+                        ],
+                        "output_format": "JSON",
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "PVE Qemu"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "a1b2c3d4e5f6478899aabbccddeeff01",
+                        "name": "Disk used",
+                        "type": "DEPENDENT",
+                        "key": "pveapi.qemu.disk",
+                        "delay": "0",
+                        "units": "B",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.body.data.result[?(@.mountpoint == \"/\")]['used-bytes'].first()"
+                                ],
+                                "error_handler": "DISCARD_VALUE"
+                            }
+                        ],
+                        "master_item": {
+                            "key": "pveapi.qemu.master.fsinfo"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "PVE Qemu"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "a1b2c3d4e5f6478899aabbccddeeff02",
+                        "name": "Disk free",
+                        "type": "CALCULATED",
+                        "key": "pveapi.qemu.diskfree",
+                        "units": "%",
+                        "params": "100*(last(//pveapi.qemu.maxdisk) - last(//pveapi.qemu.disk)) / last(//pveapi.qemu.maxdisk)",
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "PVE Qemu"
+                            }
+                        ]
+                    },
+                    {
                         "uuid": "2697dee24c244ecaa7db80a5fb6a1e26",
                         "name": "Disk size",
                         "type": "DEPENDENT",
@@ -3231,12 +3296,13 @@
                             {
                                 "type": "JSONPATH",
                                 "parameters": [
-                                    "$.body.data.maxdisk"
-                                ]
+                                    "$.body.data.result[?(@.mountpoint == \"/\")]['total-bytes'].first()"
+                                ],
+                                "error_handler": "DISCARD_VALUE"
                             }
                         ],
                         "master_item": {
-                            "key": "pveapi.qemu.master.status"
+                            "key": "pveapi.qemu.master.fsinfo"
                         },
                         "tags": [
                             {
@@ -3296,12 +3362,62 @@
                         ]
                     },
                     {
+                        "uuid": "e3f4a5b6c7d8489e9faabbccddeeff04",
+                        "name": "Memory free (balloon)",
+                        "type": "DEPENDENT",
+                        "key": "pveapi.qemu.balloon.freemem",
+                        "delay": "0",
+                        "units": "B",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.body.data.ballooninfo.free_mem"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "pveapi.qemu.master.status"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "PVE Qemu"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "f5a6b7c8d9e4489faaabbccddeeff005",
+                        "name": "Memory total (balloon)",
+                        "type": "DEPENDENT",
+                        "key": "pveapi.qemu.balloon.totalmem",
+                        "delay": "0",
+                        "units": "B",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.body.data.ballooninfo.total_mem"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "pveapi.qemu.master.status"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "PVE Qemu"
+                            }
+                        ]
+                    },
+                    {
                         "uuid": "ff026525c014421da9409aa0544880d2",
                         "name": "Memory free",
                         "type": "CALCULATED",
                         "key": "pveapi.qemu.memfree",
                         "units": "%",
-                        "params": "100*((last(//pveapi.qemu.maxmem) - last(//pveapi.qemu.mem)) / last(//pveapi.qemu.maxmem))",
+                        "params": "100*(last(//pveapi.qemu.balloon.freemem) / last(//pveapi.qemu.balloon.totalmem))",
                         "tags": [
                             {
                                 "tag": "Application",
@@ -4092,6 +4208,11 @@
                         "macro": "{$PVETASKTIME}",
                         "value": "86400",
                         "description": "Alert if tasks fail between now and value seconds ago"
+                    },
+                    {
+                        "macro": "{$PVEVMEXCLUDE}",
+                        "value": "^(template|test).*",
+                        "description": "Virtual machines matching this regex will be excluded from discovery"
                     }
                 ]
             }
@@ -4158,6 +4279,36 @@
                 "manual_close": "YES"
             },
             {
+                "uuid": "f4e8d2c19a3b4f5e8d7c1a2b3c4d5e6f",
+                "expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)<1 and last(/Template pve api qemu/pveapi.qemu.poolcheck)=1",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)>3",
+                "name": "Disk full on {$PVEQEMUNAME}",
+                "priority": "DISASTER",
+                "description": "{$PVEQEMUNAME} has no diskspace left over the last 10 minutes.",
+                "manual_close": "YES"
+            },
+            {
+                "uuid": "a7b6c5d43e2f4a1b9c8d7e6f5a4b3c2d",
+                "expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)<5 and last(/Template pve api qemu/pveapi.qemu.poolcheck)=1",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)>7",
+                "name": "Disk less than 5% free on {$PVEQEMUNAME}",
+                "priority": "HIGH",
+                "description": "{$PVEQEMUNAME} has less then 5% diskspace free over the last 10 minutes.",
+                "manual_close": "YES"
+            },
+            {
+                "uuid": "b8c7d6e54f3a4b2c8d9e8f7a6b5c4d3e",
+                "expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)<10 and\navg(/Template pve api qemu/pveapi.qemu.diskfree,10m)>5 and last(/Template pve api qemu/pveapi.qemu.poolcheck)=1",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/Template pve api qemu/pveapi.qemu.diskfree,10m)>15",
+                "name": "Disk less than 10% free on {$PVEQEMUNAME}",
+                "priority": "WARNING",
+                "description": "{$PVEQEMUNAME} has less then 10% diskspace free over the last 10 minutes.",
+                "manual_close": "YES"
+            },
+            {
                 "uuid": "7a44e7643758414895b00c12d6a7bd97",
                 "expression": "avg(/Template pve api lxc/pveapi.lxc.memfree,10m)<5 and last(/Template pve api lxc/pveapi.lxc.poolcheck)=1",
                 "recovery_mode": "RECOVERY_EXPRESSION",
@@ -4179,12 +4330,12 @@
             },
             {
                 "uuid": "ebf09145336644448ee560e8c4036c54",
-                "expression": "avg(/Template pve api qemu/pveapi.qemu.memfree,10m)<5 and last(/Template pve api qemu/pveapi.qemu.poolcheck)=1",
+                "expression": "avg(/Template pve api qemu/pveapi.qemu.memfree,10m)<0.5 and last(/Template pve api qemu/pveapi.qemu.poolcheck)=1",
                 "recovery_mode": "RECOVERY_EXPRESSION",
-                "recovery_expression": "avg(/Template pve api qemu/pveapi.qemu.memfree,10m)>10",
-                "name": "Memory less than 5% free on {$PVEQEMUNAME}",
-                "priority": "WARNING",
-                "description": "{$PVEQEMUNAME} has less then 5% memory free over the last 10 minutes.",
+                "recovery_expression": "avg(/Template pve api qemu/pveapi.qemu.memfree,10m)>1",
+                "name": "Memory critically low on {$PVEQEMUNAME}",
+                "priority": "HIGH",
+                "description": "{$PVEQEMUNAME} has less than 0.5% truly free memory (excludes cache/buffers). Note: ballooninfo.free_mem shows only non-cached free RAM. Linux systems normally use most RAM for cache, so low percentages (2-5%) are typically normal. This trigger only fires when memory is critically exhausted.",
                 "manual_close": "YES"
             },
             {
@@ -4351,6 +4502,34 @@
                         "item": {
                             "host": "Template pve api qemu",
                             "key": "pveapi.qemu.cpu"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "c9d8e7f65a4b4c2d8e0f9a8b7c6d5e4f",
+                "name": "Disk usage",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "ITEM",
+                "ymax_item_1": {
+                    "host": "Template pve api qemu",
+                    "key": "pveapi.qemu.maxdisk"
+                },
+                "graph_items": [
+                    {
+                        "drawtype": "FILLED_REGION",
+                        "color": "33FF33",
+                        "item": {
+                            "host": "Template pve api qemu",
+                            "key": "pveapi.qemu.maxdisk"
+                        }
+                    },
+                    {
+                        "sortorder": "1",
+                        "color": "F63100",
+                        "item": {
+                            "host": "Template pve api qemu",
+                            "key": "pveapi.qemu.disk"
                         }
                     }
                 ]
