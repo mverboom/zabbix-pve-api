@@ -180,3 +180,30 @@ And a value of ```^(development|test|acceptance)$``` will match all pool pool na
 The value ```^(((?!^production$).)*)$``` is a negative lookahead regex which will match all pools, except for pool 'production'
 
 Testing regexes can be done here: https://regex101.com
+
+```{$PVEALERTGROUP}```
+
+Default value: (empty)
+
+All triggers in this template set carry a tag named ```alert_group``` with the
+value of this macro. By setting this macro on a Proxmox datacenter host, all
+hosts discovered through host prototypes (nodes, qemu virtual machines, and lxc
+containers) will inherit the value. This allows routing alerts to different
+teams when multiple admin groups manage separate Proxmox clusters in the same
+Zabbix installation.
+
+To use this feature:
+1. Set ```{$PVEALERTGROUP}``` on each Proxmox datacenter host (host-level
+   macro) to a value identifying the responsible team, for example ```team-a```
+   or ```team-b```
+2. Create trigger actions in Zabbix with a condition matching the ```alert_group```
+   tag value, for example: Tag ```alert_group``` equals ```team-a``` sends
+   notifications to team-a users
+
+When this macro is left empty (the default), the ```alert_group``` tag will be
+present on all trigger events with an empty value. This has no effect on
+existing alert routing. Trigger actions that do not filter on this tag are
+unaffected.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for details on how macros are inherited
+by discovered hosts.

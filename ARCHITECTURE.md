@@ -91,6 +91,34 @@ the cluster and uses Host Prototypes to create:
 Each of the created hosts have their own items and discovery rules to create and
 monitor the specific items for the host.
 
+### Macro inheritance to discovered hosts
+
+Hosts created by host prototypes do not inherit host groups from the parent
+(datacenter) host. However, Zabbix does inherit host-level macros from the
+parent host to discovered hosts through its "master host macro" mechanism.
+
+This means any macro defined at the host level on the datacenter host (not on
+a template) is automatically copied to all discovered hosts (nodes, qemu, lxc)
+with its actual value. This mechanism is already used for the API connection
+macros (`{$PVESERVER}`, `{$PVETOKENID}`, `{$PVESECRET}`), which the discovered
+hosts need for their own API calls.
+
+The settings template macros (like `{$PVESNAPSHOTAGE}`) are available on
+discovered hosts through normal template inheritance (discovered host ->
+node/qemu/lxc template -> settings template). If a macro is defined both on the
+settings template and at the host level on the datacenter host, the host-level
+value takes precedence on discovered hosts.
+
+### Alert routing
+
+All triggers in this template set carry a tag named `alert_group` with the
+value `{$PVEALERTGROUP}`. This macro is defined on the settings template with
+an empty default. By setting it at the host level on a datacenter host, the
+value is inherited by all discovered hosts in that cluster. Trigger actions can
+then use the `alert_group` tag to route notifications to specific teams.
+
+See the README.md for configuration instructions.
+
 ### VM migrations
 
 Because the VM's are not hierarchically linked to the node they run on, data will

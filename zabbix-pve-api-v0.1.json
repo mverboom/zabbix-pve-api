@@ -124,7 +124,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "nodata(/Template pve api datacenter/pveapi.datacenter.master.resources,2m)=0",
                                 "name": "{$PVESERVER} Proxmox API unreachable",
-                                "priority": "DISASTER"
+                                "priority": "DISASTER",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -182,7 +188,13 @@
                                 "expression": "last(/Template pve api datacenter/pveapi.datacenter.tasks.failed,#1) > 0",
                                 "name": "{$PVESERVER} tasks failed",
                                 "priority": "WARNING",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -340,7 +352,13 @@
                                         "uuid": "142fe8a88c8d489abafdac7504bf9b16",
                                         "expression": "last(/Template pve api datacenter/pxeapi.datacenter.node.online[{#PVENODE}])=0",
                                         "name": "Node {#PVENODE} offline",
-                                        "priority": "HIGH"
+                                        "priority": "HIGH",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     }
                                 ]
                             }
@@ -1137,7 +1155,13 @@
                                 "expression": "now()-\nlast(/Template pve api lxc/pveapi.lxc.snapshot.time[{#PVELXCSNAPSHOT}])>{$PVESNAPSHOTAGE} and last(/Template pve api lxc/pveapi.lxc.snapshot.check[{#PVELXCSNAPSHOT}])=1",
                                 "name": "{$PVELXCNAME} snapshot {#PVELXCSNAPSHOT} too old",
                                 "priority": "WARNING",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ],
                         "master_item": {
@@ -1862,7 +1886,13 @@
                                 "name": "{$PVENODE} is restarted",
                                 "priority": "INFO",
                                 "description": "{$PVENODE} restarted",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -1907,7 +1937,13 @@
                                         "expression": "find(/Template pve api node/pveapi.node.disk.health[{#PVENODEDISK}],,\"regexp\",\"PASSED|OK|UNKNOWN\")=0",
                                         "name": "{$PVENODE} disk {#PVENODEDISK} health failed",
                                         "priority": "DISASTER",
-                                        "manual_close": "YES"
+                                        "manual_close": "YES",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -1949,14 +1985,26 @@
                                         "expression": "last(/Template pve api node/pveapi.node.disk.wearout[{#PVENODEDISK}])<-10",
                                         "name": "{$PVENODE} disk {#PVENODEDISK} wearout under 10%",
                                         "priority": "HIGH",
-                                        "manual_close": "YES"
+                                        "manual_close": "YES",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     },
                                     {
                                         "uuid": "b351159990db43e8a163d64673d0c271",
                                         "expression": "last(/Template pve api node/pveapi.node.disk.wearout[{#PVENODEDISK}])<=20",
                                         "name": "{$PVENODE} disk {#PVENODEDISK} wearout under 20%",
                                         "priority": "AVERAGE",
-                                        "manual_close": "YES"
+                                        "manual_close": "YES",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     }
                                 ]
                             }
@@ -2230,7 +2278,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}])))\n< 95",
                                 "name": "{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 2% free",
-                                "priority": "DISASTER"
+                                "priority": "DISASTER",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "9030bda7c5a549229e2a82207c434268",
@@ -2238,7 +2292,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}]))) < 88",
                                 "name": "{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 10% free",
-                                "priority": "HIGH"
+                                "priority": "HIGH",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "c56349f1242849de854389685e65100a",
@@ -2246,7 +2306,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.metadataused[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.metadatasize[{#PVENODELVMTHIN}])))\n< 75",
                                 "name": "{$PVENODE} lvm thin metadata {#PVENODELVMTHIN} less then 20% free",
-                                "priority": "WARNING"
+                                "priority": "WARNING",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "0ebf3fe825a94067a292846104bdabcd",
@@ -2254,7 +2320,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.used[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))\n< 95",
                                 "name": "{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 2% free",
-                                "priority": "DISASTER"
+                                "priority": "DISASTER",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "f6612447d5eb4a649316622af57081c4",
@@ -2262,7 +2334,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.used[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))\n< 88",
                                 "name": "{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 10% free",
-                                "priority": "HIGH"
+                                "priority": "HIGH",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "b79b31ad77f94549a32cd31dbce53c4a",
@@ -2270,7 +2348,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.lvmthin.used[{#PVENODELVMTHIN}])/\nlast(/Template pve api node/pveapi.node.lvmthin.size[{#PVENODELVMTHIN}])))\n< 75",
                                 "name": "{$PVENODE} lvm thin {#PVENODELVMTHIN} less then 20% free",
-                                "priority": "WARNING"
+                                "priority": "WARNING",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ],
                         "graph_prototypes": [
@@ -2383,7 +2467,13 @@
                                         "uuid": "de30c6b9c3c8452a93523b79e14eb657",
                                         "expression": "find(/Template pve api node/pveapi.node.services.state[{#PVENODESERVICE}],,\"regexp\",\"running\")=0",
                                         "name": "{$PVENODE} service {#PVENODESERVICE} not running",
-                                        "priority": "AVERAGE"
+                                        "priority": "AVERAGE",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     }
                                 ]
                             }
@@ -2479,7 +2569,13 @@
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}])/\nlast(/Template pve api node/pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}])))\n< 95",
                                 "name": "{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 2% free",
                                 "priority": "DISASTER",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "5f1356ccc6854166b67cc6d5b365dc6f",
@@ -2488,7 +2584,13 @@
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}])/\nlast(/Template pve api node/pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}])))\n< 88",
                                 "name": "{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 10% free",
                                 "priority": "HIGH",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "992e85eb342a4880816adf7d1be0ae02",
@@ -2497,7 +2599,13 @@
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.storagepool.used[{#PVENODESTORAGEPOOL}])/\nlast(/Template pve api node/pveapi.node.storagepool.size[{#PVENODESTORAGEPOOL}])))\n< 75",
                                 "name": "{$PVENODE} storage pool {#PVENODESTORAGEPOOL} less then 20% free",
                                 "priority": "WARNING",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ],
                         "graph_prototypes": [
@@ -2634,7 +2742,13 @@
                                         "uuid": "a1dad15633944c9784dac5277af9fd2d",
                                         "expression": "find(/Template pve api node/pveapi.node.zfs.health[{#PVENODEZFSPOOL}],,\"regexp\",\"ONLINE\")=0",
                                         "name": "{$PVENODE} zpool {#PVENODEZFSPOOL} health failed",
-                                        "priority": "DISASTER"
+                                        "priority": "DISASTER",
+                                        "tags": [
+                                            {
+                                                "tag": "alert_group",
+                                                "value": "{$PVEALERTGROUP}"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -2671,7 +2785,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}])/\nlast(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))\n< 95",
                                 "name": "{$PVENODE} zpool {#PVENODEZFSPOOL} less then 2% free",
-                                "priority": "DISASTER"
+                                "priority": "DISASTER",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "6d9fad5a1fa2472281a00a740d75f723",
@@ -2679,7 +2799,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}])/\nlast(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))\n< 88",
                                 "name": "{$PVENODE} zpool {#PVENODEZFSPOOL} less then 10% free",
-                                "priority": "HIGH"
+                                "priority": "HIGH",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             },
                             {
                                 "uuid": "8ab8326e7241438da949a45476e1705b",
@@ -2687,7 +2813,13 @@
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "(100*(last(/Template pve api node/pveapi.node.zfs.alloc[{#PVENODEZFSPOOL}])/\nlast(/Template pve api node/pveapi.node.zfs.size[{#PVENODEZFSPOOL}])))\n< 75",
                                 "name": "{$PVENODE} zpool {#PVENODEZFSPOOL} less then 20% free",
-                                "priority": "WARNING"
+                                "priority": "WARNING",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ],
                         "graph_prototypes": [
@@ -4000,7 +4132,13 @@
                                 "expression": "now()-\nlast(/Template pve api qemu/pveapi.qemu.snapshot.time[{#PVEQEMUSNAPSHOT}])>{$PVESNAPSHOTAGE} and last(/Template pve api qemu/pveapi.qemu.snapshot.check[{#PVEQEMUSNAPSHOT}])=1",
                                 "name": "{$PVEQEMUNAME} snapshot {#PVEQEMUSNAPSHOT} too old",
                                 "priority": "WARNING",
-                                "manual_close": "YES"
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "alert_group",
+                                        "value": "{$PVEALERTGROUP}"
+                                    }
+                                ]
                             }
                         ],
                         "master_item": {
@@ -4213,6 +4351,11 @@
                         "macro": "{$PVEVMEXCLUDE}",
                         "value": "^(template|test).*",
                         "description": "Virtual machines matching this regex will be excluded from discovery"
+                    },
+                    {
+                        "macro": "{$PVEALERTGROUP}",
+                        "value": "",
+                        "description": "Set this on each Proxmox datacenter host to route alerts to a specific team (e.g. team-a). Leave empty to disable tag-based routing."
                     }
                 ]
             }
@@ -4226,7 +4369,13 @@
                 "name": "CPU over 80% for last 15 minutes on {$PVELXCNAME}",
                 "priority": "WARNING",
                 "description": "{$PVELXCNAME} has more then 80% CPU usage over the last 15 minutes",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "054dc8555f5d4112b2bcd0357b4b8726",
@@ -4236,7 +4385,13 @@
                 "name": "CPU over 80% for last 15 minutes on {$PVENODE}",
                 "priority": "WARNING",
                 "description": "{$PVENODE} has more then 80% CPU usage over the last 15 minutes",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "be8f355436334ef08dd5d049ea0811b1",
@@ -4246,7 +4401,13 @@
                 "name": "CPU over 80% for last 15 minutes on {$PVEQEMUNAME}",
                 "priority": "WARNING",
                 "description": "{$PVEQEMUNAME} has more then 80% CPU usage over the last 15 minutes",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "6f33c9431fb64dfca9116494c61dc1ff",
@@ -4256,7 +4417,13 @@
                 "name": "Disk full on {$PVELXCNAME}",
                 "priority": "DISASTER",
                 "description": "{$PVELXCNAME} has no diskspace left over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "464011111d7f4b07aed59fa16e169bbf",
@@ -4266,7 +4433,13 @@
                 "name": "Disk less than 5% free on {$PVELXCNAME}",
                 "priority": "HIGH",
                 "description": "{$PVELXCNAME} has less then 5% diskspace free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "c821468ee95a4957beebb8f72b2666e5",
@@ -4276,7 +4449,13 @@
                 "name": "Disk less than 10% free on {$PVELXCNAME}",
                 "priority": "WARNING",
                 "description": "{$PVELXCNAME} has less then 10% diskspace free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "f4e8d2c19a3b4f5e8d7c1a2b3c4d5e6f",
@@ -4286,7 +4465,13 @@
                 "name": "Disk full on {$PVEQEMUNAME}",
                 "priority": "DISASTER",
                 "description": "{$PVEQEMUNAME} has no diskspace left over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "a7b6c5d43e2f4a1b9c8d7e6f5a4b3c2d",
@@ -4296,7 +4481,13 @@
                 "name": "Disk less than 5% free on {$PVEQEMUNAME}",
                 "priority": "HIGH",
                 "description": "{$PVEQEMUNAME} has less then 5% diskspace free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "b8c7d6e54f3a4b2c8d9e8f7a6b5c4d3e",
@@ -4306,7 +4497,13 @@
                 "name": "Disk less than 10% free on {$PVEQEMUNAME}",
                 "priority": "WARNING",
                 "description": "{$PVEQEMUNAME} has less then 10% diskspace free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "7a44e7643758414895b00c12d6a7bd97",
@@ -4316,7 +4513,13 @@
                 "name": "Memory less than 5% free on {$PVELXCNAME}",
                 "priority": "WARNING",
                 "description": "{$PVELXCNAME} has less then 5% memory + swap free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "a8c1d3abe6c34a0daabf662638053df9",
@@ -4326,7 +4529,13 @@
                 "name": "Memory less than 5% free on {$PVENODE}",
                 "priority": "WARNING",
                 "description": "{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "ebf09145336644448ee560e8c4036c54",
@@ -4336,7 +4545,13 @@
                 "name": "Memory critically low on {$PVEQEMUNAME}",
                 "priority": "HIGH",
                 "description": "{$PVEQEMUNAME} has less than 0.5% truly free memory (excludes cache/buffers). Note: ballooninfo.free_mem shows only non-cached free RAM. Linux systems normally use most RAM for cache, so low percentages (2-5%) are typically normal. This trigger only fires when memory is critically exhausted.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "4d54c5672bea4abebe549a8d233afac6",
@@ -4346,7 +4561,13 @@
                 "name": "RootFS has less than 10% free on {$PVENODE}",
                 "priority": "WARNING",
                 "description": "{$PVENODE} has less then 10% diskspace free over the last 10 minutes",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "ceeccc264de443d79832172ed6bf683b",
@@ -4356,7 +4577,13 @@
                 "name": "Swap more than 50% used on {$PVENODE}",
                 "priority": "WARNING",
                 "description": "{$PVENODE} has less then 5% memory + swap free over the last 10 minutes.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "c79d48b2f7c04454a39c2a4950ba8e21",
@@ -4364,7 +4591,13 @@
                 "name": "{$PVELXCNAME} is locked: {ITEM.LASTVALUE1}",
                 "priority": "AVERAGE",
                 "description": "{$PVELXCNAME} is stopped.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "03937bcc04b84ae7b9285887c290991b",
@@ -4372,7 +4605,13 @@
                 "name": "{$PVELXCNAME} is restarted",
                 "priority": "INFO",
                 "description": "{$PVELXCNAME} restarted",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "cafb6176baca41e5b40d7840e70d5b77",
@@ -4380,7 +4619,13 @@
                 "name": "{$PVELXCNAME} is stopped",
                 "priority": "WARNING",
                 "description": "{$PVELXCNAME} is stopped.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "3162a28e319c4c71a233a3da6bbc3a69",
@@ -4388,7 +4633,13 @@
                 "name": "{$PVEQEMUNAME} is restarted",
                 "priority": "INFO",
                 "description": "{$PVEQEMUNAME} restarted",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             },
             {
                 "uuid": "d3291775d6d34716b045d6eb0564bff9",
@@ -4396,7 +4647,13 @@
                 "name": "{$PVEQEMUNAME} is stopped",
                 "priority": "WARNING",
                 "description": "{$PVEQEMUNAME} is stopped.",
-                "manual_close": "YES"
+                "manual_close": "YES",
+                "tags": [
+                    {
+                        "tag": "alert_group",
+                        "value": "{$PVEALERTGROUP}"
+                    }
+                ]
             }
         ],
         "graphs": [
